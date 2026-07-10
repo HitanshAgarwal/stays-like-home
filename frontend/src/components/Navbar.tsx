@@ -229,11 +229,35 @@ function initials(name: string): string {
 
 /* --- inline icons (no external deps) --- */
 
-// Inline brand logo mark.
+// Inline brand logo mark — the house-with-curved-roof used as the favicon, so the
+// header and browser tab share one identity: coral tile with a white arched-roof house.
 function LogoMark() {
   return (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 2.25c-.62 0-1.16.36-1.6 1.02-.4.6-.85 1.5-1.4 2.6L4.3 15.1c-.5 1-.8 1.8-.86 2.5-.1 1.2.5 2.3 1.55 2.9.86.5 1.9.5 2.86.02.9-.44 1.83-1.3 2.9-2.55l.24-.28.24.28c1.07 1.25 2 2.1 2.9 2.55.96.48 2 .48 2.86-.02 1.05-.6 1.65-1.7 1.55-2.9-.06-.7-.36-1.5-.86-2.5L15.4 5.87c-.55-1.1-1-2-1.4-2.6-.44-.66-.98-1.02-1.6-1.02zm0 1.6c.1.03.28.2.55.6.35.53.77 1.37 1.32 2.47l4.68 9.24c.45.9.68 1.5.72 1.94.05.63-.25 1.16-.78 1.46-.44.26-.98.25-1.5-.01-.66-.33-1.48-1.08-2.48-2.25l-1.46-1.7a1 1 0 00-1.52 0l-1.46 1.7c-1 1.17-1.82 1.92-2.48 2.25-.52.26-1.06.27-1.5.01-.53-.3-.83-.83-.78-1.46.04-.44.27-1.04.72-1.94l4.68-9.24c.55-1.1.97-1.94 1.32-2.47.27-.4.45-.57.55-.6z" />
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+      <rect width="32" height="32" rx="7" fill="var(--color-accent)" />
+      <path
+        d="M6 17c0-5 4.5-9 10-9s10 4 10 9"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M9 16.5V24a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7.5"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M14 25v-4.5a2 2 0 0 1 4 0V25"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
