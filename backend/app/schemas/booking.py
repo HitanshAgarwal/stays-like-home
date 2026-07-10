@@ -52,4 +52,7 @@ class BookingOut(BaseModel):
 class BookingWithListingOut(BookingOut):
     """A booking with its embedded listing summary, for trips/dashboard views."""
 
+    # whether this booking already has a review (so the client can hide "Leave a review")
+    reviewed: bool = False
+
     listing: BookingListingOut

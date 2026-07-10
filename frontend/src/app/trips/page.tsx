@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+import { ReviewModal } from "@/components/ReviewModal";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateRange, todayISO } from "@/lib/dates";
@@ -24,6 +25,10 @@ export default function TripsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cancelingId, setCancelingId] = useState<number | null>(null);
+  // booking currently being reviewed (drives the ReviewModal)
+  const [reviewing, setReviewing] = useState<BookingWithListing | null>(null);
+  // booking ids reviewed this session, so the "Leave a review" button hides after submit
+  const [reviewedIds, setReviewedIds] = useState<Set<number>>(new Set());
 
   // redirect to login once we know there's no user
   useEffect(() => {
@@ -126,11 +131,29 @@ export default function TripsPage() {
           {past.length > 0 && (
             <Section title="Where you've been" count={past.length}>
               {past.map((b) => (
-                <TripCard key={b.id} booking={b} />
+                <TripCard
+                  key={b.id}
+                  booking={b}
+                  // completed, not-yet-reviewed stays (server truth + this session's submits)
+                  reviewable={b.status === "completed" && !b.reviewed && !reviewedIds.has(b.id)}
+                  onReview={() => setReviewing(b)}
+                />
               ))}
             </Section>
           )}
         </>
+      )}
+
+      {reviewing && (
+        <ReviewModal
+          bookingId={reviewing.id}
+          listingTitle={reviewing.listing.title}
+          onClose={() => setReviewing(null)}
+          onSubmitted={() => {
+            setReviewedIds((prev) => new Set(prev).add(reviewing.id));
+            setReviewing(null);
+          }}
+        />
       )}
     </div>
   );
@@ -156,17 +179,22 @@ function Section({
   );
 }
 
-// A single booking card: cover photo, listing info, dates/guests/price, status, and an optional cancel button.
+// A single booking card: cover photo, listing info, dates/guests/price, status, and an
+// optional cancel button (upcoming) or "Leave a review" button (completed).
 function TripCard({
   booking,
   cancelable,
   canceling,
   onCancel,
+  reviewable,
+  onReview,
 }: {
   booking: BookingWithListing;
   cancelable?: boolean;
   canceling?: boolean;
   onCancel?: () => void;
+  reviewable?: boolean;
+  onReview?: () => void;
 }) {
   const { listing } = booking;
   return (
@@ -200,16 +228,27 @@ function TripCard({
           {formatPrice(booking.total_price)} total
         </p>
 
-        {cancelable && (
+        {(cancelable || reviewable) && (
           <div className="mt-auto pt-3">
-            <button
-              type="button"
-              onClick={onCancel}
-              disabled={canceling}
-              className="rounded-lg border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-ink disabled:opacity-50"
-            >
-              {canceling ? "Cancelling…" : "Cancel booking"}
-            </button>
+            {cancelable && (
+              <button
+                type="button"
+                onClick={onCancel}
+                disabled={canceling}
+                className="rounded-lg border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-ink disabled:opacity-50"
+              >
+                {canceling ? "Cancelling…" : "Cancel booking"}
+              </button>
+            )}
+            {reviewable && (
+              <button
+                type="button"
+                onClick={onReview}
+                className="rounded-lg border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-ink"
+              >
+                Leave a review
+              </button>
+            )}
           </div>
         )}
       </div>

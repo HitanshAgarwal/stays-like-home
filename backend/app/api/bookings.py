@@ -139,7 +139,10 @@ async def my_bookings(
         await db.scalars(
             select(Booking)
             .where(Booking.guest_id == current_user.id)
-            .options(selectinload(Booking.listing).selectinload(Listing.photos))
+            .options(
+                selectinload(Booking.listing).selectinload(Listing.photos),
+                selectinload(Booking.review),  # so we can tell the client if it's reviewed
+            )
             .order_by(Booking.check_in.desc(), Booking.id.desc())
         )
     ).all()
@@ -212,6 +215,7 @@ def _to_with_listing(booking: Booking) -> BookingWithListingOut:
     listing = booking.listing
     out = BookingWithListingOut.model_validate(booking)
     out.status = effective_status(booking)
+    out.reviewed = booking.review is not None
     out.listing = BookingListingOut(
         id=listing.id,
         title=listing.title,

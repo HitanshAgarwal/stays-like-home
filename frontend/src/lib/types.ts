@@ -118,4 +118,5 @@ export interface BookingListing {
 
 export interface BookingWithListing extends Booking {
   listing: BookingListing;
+  reviewed: boolean;
 }
