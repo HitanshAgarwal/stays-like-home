@@ -1,36 +1,79 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode: `dark:` variants apply when a .dark ancestor
+   exists (we toggle .dark on <html> from the theme context). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
   Stays Like Home design tokens.
-  Warm-neutral palette closer to Airbnb's real UI than default Tailwind:
-  off-white backgrounds, near-black (not pure #000) text, a coral accent
-  (Airbnb's "Rausch"), and soft borders. Tailwind v4 reads these @theme
-  variables to generate utilities (bg-canvas, text-ink, text-accent, etc).
+
+  Colors are defined as raw values on :root (light) and overridden on .dark, then
+  referenced by the @theme color tokens below. Because every component uses the
+  semantic utilities (bg-canvas, text-ink, border-line, ...), flipping these
+  root variables re-themes the whole app at runtime with no per-element dark:.
 */
-@theme {
-  /* accent — Airbnb Rausch-ish coral, with a darker hover */
-  --color-accent: #ff385c;
-  --color-accent-hover: #e00b41;
-  --color-accent-soft: #fff0f3;
+:root {
+  --c-accent: #ff385c;
+  --c-accent-hover: #e00b41;
+  --c-accent-soft: #fff0f3;
+  --c-canvas: #ffffff;
+  --c-surface: #ffffff;
+  --c-muted: #f7f7f5;
+  --c-ink: #222222;
+  --c-ink-soft: #5e5d5a;
+  --c-ink-faint: #8a8986;
+  --c-line: #e6e4e0;
+  --c-line-strong: #d6d3ce;
+  /* a deliberately theme-stable dark chip (selected pills, avatars, badges):
+     stays dark with light text in BOTH themes, so it never inverts to
+     light-on-light the way bg-ink would in dark mode. */
+  --c-contrast: #222222;
+  --c-on-contrast: #ffffff;
+  --shadow-card-v: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-nav-v: 0 1px 0 rgba(0, 0, 0, 0.04), 0 1px 12px rgba(0, 0, 0, 0.03);
+}
 
-  /* warm neutrals */
-  --color-canvas: #ffffff;
-  --color-surface: #ffffff;
-  --color-muted: #f7f7f5; /* warm off-white for section fills */
-  --color-ink: #222222; /* primary text — near-black, warm */
-  --color-ink-soft: #5e5d5a; /* secondary text, warm gray */
-  --color-ink-faint: #8a8986; /* tertiary / placeholder */
-  --color-line: #e6e4e0; /* warm hairline borders */
-  --color-line-strong: #d6d3ce;
+.dark {
+  /* warm-dark palette: near-black warm canvas, lifted surfaces, softened text */
+  --c-accent: #ff5a76; /* slightly brighter coral so it pops on dark */
+  --c-accent-hover: #ff7389;
+  --c-accent-soft: #3a1f27; /* muted coral tint for chips/badges on dark */
+  --c-canvas: #1a1a1a;
+  --c-surface: #242424;
+  --c-muted: #2e2e2e;
+  --c-ink: #f2f2f0;
+  --c-ink-soft: #b5b4b0;
+  --c-ink-faint: #8a8986;
+  --c-line: #3a3a3a;
+  --c-line-strong: #4a4a4a;
+  /* in dark mode the contrast chip inverts to a light fill with dark text */
+  --c-contrast: #f2f2f0;
+  --c-on-contrast: #1a1a1a;
+  --shadow-card-v: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-nav-v: 0 1px 0 rgba(0, 0, 0, 0.4), 0 1px 12px rgba(0, 0, 0, 0.3);
+}
 
-  /* radii — Airbnb leans on generous rounding */
+@theme inline {
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-muted: var(--c-muted);
+  --color-ink: var(--c-ink);
+  --color-ink-soft: var(--c-ink-soft);
+  --color-ink-faint: var(--c-ink-faint);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-contrast: var(--c-contrast);
+  --color-on-contrast: var(--c-on-contrast);
+
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
 
-  /* type scale — deliberate, ~1.2 ratio, not the browser defaults */
   --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
-  --text-base: 0.9375rem; /* 15px base, matching Airbnb's slightly smaller body */
+  --text-base: 0.9375rem;
   --text-lg: 1.0625rem;
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
@@ -41,8 +84,8 @@
     "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
 
-  --shadow-card: 0 6px 16px rgba(0, 0, 0, 0.08);
-  --shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.04), 0 1px 12px rgba(0, 0, 0, 0.03);
+  --shadow-card: var(--shadow-card-v);
+  --shadow-nav: var(--shadow-nav-v);
 }
 
 html {
@@ -59,13 +102,18 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* focus ring that matches the accent, for keyboard users */
+/* smooth the theme switch */
+body,
+body * {
+  transition-property: background-color, border-color;
+  transition-duration: 150ms;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
-/* hide scrollbar on the horizontal category chip row */
 .scrollbar-none {
   scrollbar-width: none;
   -ms-overflow-style: none;

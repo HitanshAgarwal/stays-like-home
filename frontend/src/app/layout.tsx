@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 
 import { Navbar } from "@/components/Navbar";
 import { AuthProvider } from "@/lib/auth-context";
+import { ThemeProvider, themeInitScript } from "@/lib/theme-context";
 import { ToastProvider } from "@/lib/toast-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import "./globals.css";
@@ -29,17 +30,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
+    <html lang="en" className={`${inter.variable} h-full`} suppressHydrationWarning>
+      <head>
+        {/* set the theme class before paint to avoid a flash of the wrong theme */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="flex min-h-full flex-col bg-canvas text-ink antialiased">
-        <ToastProvider>
-          <AuthProvider>
-            <WishlistProvider>
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <SiteFooter />
-            </WishlistProvider>
-          </AuthProvider>
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <WishlistProvider>
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <SiteFooter />
+              </WishlistProvider>
+            </AuthProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
