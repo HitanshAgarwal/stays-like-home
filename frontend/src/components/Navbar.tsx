@@ -94,8 +94,14 @@ export function Navbar() {
                     <MenuLink href="/trips" onClick={() => setMenuOpen(false)}>
                       My trips
                     </MenuLink>
+                    <MenuLink href="/messages" onClick={() => setMenuOpen(false)}>
+                      Messages
+                    </MenuLink>
                     <MenuLink href="/host" onClick={() => setMenuOpen(false)}>
                       Host dashboard
+                    </MenuLink>
+                    <MenuLink href="/account/verification" onClick={() => setMenuOpen(false)}>
+                      Identity verification
                     </MenuLink>
                     <div className="my-1 border-t border-line" />
                     <button
