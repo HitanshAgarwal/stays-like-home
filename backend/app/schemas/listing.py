@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated
 
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
@@ -120,3 +120,15 @@ class ListingListOut(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class BookedRange(BaseModel):
+    """A half-open [check_in, check_out) span that is already taken."""
+
+    check_in: date
+    check_out: date
+
+
+class AvailabilityOut(BaseModel):
+    listing_id: int
+    booked_ranges: list[BookedRange]

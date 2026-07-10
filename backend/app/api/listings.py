@@ -9,6 +9,8 @@ from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models import Amenity, Booking, BookingStatus, Listing, ListingAmenity, ListingPhoto, Review, User
 from app.schemas.listing import (
+    AvailabilityOut,
+    BookedRange,
     ListingCreate,
     ListingDetailOut,
     ListingListOut,
@@ -157,6 +159,36 @@ async def get_listing(listing_id: int, db: AsyncSession = Depends(get_db)) -> Li
             sum(r.rating for r in listing.reviews) / len(listing.reviews), 2
         )
     return detail
+
+
+@router.get("/{listing_id}/availability", response_model=AvailabilityOut)
+async def get_availability(listing_id: int, db: AsyncSession = Depends(get_db)) -> AvailabilityOut:
+    """Public: the confirmed-booking date ranges that block this listing.
+
+    Exposes only the [check_in, check_out) spans (no guest, price, or booking id),
+    so the client can gray out taken dates without leaking who booked what. Past
+    ranges (already checked out) are omitted since they can't block a new stay.
+    """
+    listing_id_exists = await db.scalar(select(exists().where(Listing.id == listing_id)))
+    if not listing_id_exists:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
+
+    today = date.today()
+    rows = (
+        await db.scalars(
+            select(Booking)
+            .where(
+                Booking.listing_id == listing_id,
+                Booking.status == BookingStatus.CONFIRMED.value,
+                Booking.check_out > today,
+            )
+            .order_by(Booking.check_in)
+        )
+    ).all()
+    return AvailabilityOut(
+        listing_id=listing_id,
+        booked_ranges=[BookedRange(check_in=b.check_in, check_out=b.check_out) for b in rows],
+    )
 
 
 @router.post("", response_model=ListingOut, status_code=status.HTTP_201_CREATED)
