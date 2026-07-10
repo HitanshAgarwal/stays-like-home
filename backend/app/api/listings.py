@@ -1,3 +1,4 @@
+"""Listings API router: public search/browse and detail endpoints plus host-only create, update, delete, and availability lookups for the Airbnb-clone."""
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -42,12 +43,14 @@ async def _validated_amenity_ids(db: AsyncSession, amenity_ids: list[int]) -> li
 
 
 def _build_photos(photo_urls: list[str]) -> list[ListingPhoto]:
+    """Turn an ordered list of photo URLs into ListingPhoto rows, numbering positions and marking the first as the cover."""
     return [
         ListingPhoto(url=url, position=i, is_cover=(i == 0)) for i, url in enumerate(photo_urls)
     ]
 
 
 async def _get_owned_listing(db: AsyncSession, listing_id: int, user: User) -> Listing:
+    """Load a listing (with photos and amenities) and assert the given user owns it, raising 404 if missing or 403 if not the host."""
     listing = await db.scalar(
         select(Listing).where(Listing.id == listing_id).options(*LISTING_LOAD)
     )
@@ -73,6 +76,7 @@ async def list_listings(
     page_size: int = Query(default=20, ge=1, le=50),
     db: AsyncSession = Depends(get_db),
 ) -> ListingListOut:
+    """Public, paginated listing search filtered by city, property type, price, guest capacity, and (optionally) a date range that excludes listings with a confirmed overlapping booking."""
     if (check_in is None) != (check_out is None):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -128,6 +132,7 @@ async def my_listings(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[ListingOut]:
+    """List every listing owned by the current user, newest first (host's own dashboard view)."""
     rows = (
         await db.scalars(
             select(Listing)
@@ -141,6 +146,7 @@ async def my_listings(
 
 @router.get("/{listing_id}", response_model=ListingDetailOut)
 async def get_listing(listing_id: int, db: AsyncSession = Depends(get_db)) -> ListingDetailOut:
+    """Public listing detail with host, photos, amenities, and reviews, plus a computed average rating (404 if the listing is missing)."""
     listing = await db.scalar(
         select(Listing)
         .where(Listing.id == listing_id)
@@ -197,6 +203,7 @@ async def create_listing(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> ListingOut:
+    """Create a new listing owned by the current user, attaching validated amenities and building its photo rows."""
     amenity_ids = await _validated_amenity_ids(db, payload.amenity_ids)
 
     listing = Listing(
@@ -221,6 +228,7 @@ async def update_listing(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> ListingOut:
+    """Partially update a host-owned listing, applying only the provided fields and, when supplied, replacing its amenities and photos."""
     listing = await _get_owned_listing(db, listing_id, current_user)
 
     data = payload.model_dump(exclude_unset=True)
@@ -256,6 +264,7 @@ async def delete_listing(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> None:
+    """Delete a host-owned listing (404 if missing, 403 if the caller is not its host)."""
     listing = await _get_owned_listing(db, listing_id, current_user)
     await db.delete(listing)
     await db.commit()

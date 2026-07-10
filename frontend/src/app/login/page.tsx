@@ -1,5 +1,8 @@
 "use client";
 
+// Login page: collects email + password, authenticates via the auth context, and on
+// success toasts a welcome and redirects home. Also exports the shared AuthShell, Field,
+// and SubmitButton pieces reused by the register page.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -8,6 +11,7 @@ import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
 
+// Login page component: renders the form, handles submit, and shows errors/toasts.
 export default function LoginPage() {
   const { login } = useAuth();
   const { toast } = useToast();
@@ -60,6 +64,7 @@ export default function LoginPage() {
 
 // Shared bits used by both login and register.
 
+// Card layout wrapper (title, subtitle, content) shared by the login and register forms.
 export function AuthShell({
   title,
   subtitle,
@@ -80,6 +85,7 @@ export function AuthShell({
   );
 }
 
+// Labeled, controlled text input used for the auth form fields.
 export function Field({
   label,
   type,
@@ -108,6 +114,7 @@ export function Field({
   );
 }
 
+// Full-width submit button that shows a pending label while submitting.
 export function SubmitButton({
   submitting,
   children,

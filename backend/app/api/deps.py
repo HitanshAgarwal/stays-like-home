@@ -1,3 +1,4 @@
+"""Shared FastAPI dependencies for the API layer, notably bearer-token authentication used to resolve the current user."""
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,6 +14,7 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> User:
+    """Resolve the authenticated User from the bearer token, raising 401 if the credentials, token, subject, or user are invalid or missing."""
     unauthorized = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Not authenticated",

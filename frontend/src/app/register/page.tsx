@@ -1,5 +1,8 @@
 "use client";
 
+// Register page: collects name/email/password, creates an account via the auth context,
+// then toasts a welcome and redirects home. Reuses the AuthShell/Field/SubmitButton
+// primitives exported from the login page.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,6 +12,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
 import { AuthShell, Field, SubmitButton } from "../login/page";
 
+// Register page component: renders the sign-up form, handles submit, and shows errors/toasts.
 export default function RegisterPage() {
   const { register } = useAuth();
   const { toast } = useToast();

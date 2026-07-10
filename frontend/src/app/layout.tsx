@@ -1,3 +1,6 @@
+// Root layout for the whole app: loads the Inter font, sets page metadata/viewport,
+// injects the pre-paint theme script, and wraps every page in the shared providers
+// (theme, toasts, auth, wishlist) plus the persistent Navbar and site footer.
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 
@@ -24,6 +27,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+// Top-level HTML shell that mounts the provider stack, Navbar, page content, and footer.
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,6 +56,7 @@ export default function RootLayout({
   );
 }
 
+// Static site footer showing the copyright year and a demo-project disclaimer.
 function SiteFooter() {
   return (
     <footer className="border-t border-line bg-muted">

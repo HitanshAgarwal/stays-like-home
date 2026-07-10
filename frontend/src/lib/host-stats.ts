@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Hook for fetching per-host stats, with a module-level cache and in-flight
+ * request de-duplication so many cards for the same host share one request.
+ */
+
 import { useEffect, useState } from "react";
 
 import { api } from "./api";
@@ -10,6 +15,7 @@ import type { HostStats } from "./types";
 const cache = new Map<number, HostStats>();
 const inflight = new Map<number, Promise<HostStats>>();
 
+// Returns cached or freshly fetched stats for a host id (null while unresolved).
 export function useHostStats(hostId: number | undefined): HostStats | null {
   const [stats, setStats] = useState<HostStats | null>(
     hostId != null ? (cache.get(hostId) ?? null) : null,

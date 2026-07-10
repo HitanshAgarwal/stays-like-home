@@ -1,3 +1,5 @@
+// ListingCardSkeleton: an animated placeholder matching the ListingCard layout, shown in
+// the explore grid while listings are loading.
 export function ListingCardSkeleton() {
   return (
     <div className="animate-pulse">

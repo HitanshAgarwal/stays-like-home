@@ -1,3 +1,4 @@
+"""Aggregates and re-exports all SQLAlchemy ORM models for the application."""
 from app.models.amenity import Amenity, ListingAmenity
 from app.models.booking import Booking, BookingStatus
 from app.models.listing import Listing

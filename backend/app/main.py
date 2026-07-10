@@ -1,3 +1,5 @@
+"""FastAPI application entry point: wires up CORS, routers, DB startup, and a health check."""
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -20,6 +22,7 @@ import app.models  # noqa: F401
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Application lifespan: create all database tables on startup before serving requests."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
@@ -47,4 +50,5 @@ app.include_router(wishlist_router)
 
 @app.get("/api/health")
 async def health():
+    """Liveness/health-check endpoint returning a simple ok status."""
     return {"status": "ok"}

@@ -1,5 +1,8 @@
 "use client";
 
+// Trips page: shows the signed-in guest's bookings, split into Upcoming and past
+// ("Where you've been") sections. Requires auth (redirects to login otherwise), loads
+// the user's bookings, and supports cancelling upcoming bookings with an optimistic update.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -11,6 +14,7 @@ import { formatPrice } from "@/lib/format";
 import { useToast } from "@/lib/toast-context";
 import type { BookingWithListing } from "@/lib/types";
 
+// Trips page component: guards auth, fetches bookings, partitions upcoming vs. past, and handles cancellation.
 export default function TripsPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -132,6 +136,7 @@ export default function TripsPage() {
   );
 }
 
+// Titled section wrapper (with an optional count) grouping a list of trip cards.
 function Section({
   title,
   count,
@@ -151,6 +156,7 @@ function Section({
   );
 }
 
+// A single booking card: cover photo, listing info, dates/guests/price, status, and an optional cancel button.
 function TripCard({
   booking,
   cancelable,
@@ -211,6 +217,7 @@ function TripCard({
   );
 }
 
+// Colored pill reflecting the booking status (confirmed/completed/cancelled/pending).
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
     confirmed: "bg-accent-soft text-accent",
@@ -229,6 +236,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+// Empty state shown when the user has no bookings, with a CTA to start searching.
 function EmptyTrips() {
   return (
     <div className="mt-10 rounded-2xl border border-line bg-surface p-10 text-center">
@@ -244,6 +252,7 @@ function EmptyTrips() {
   );
 }
 
+// Loading placeholder; `bare` renders just the card skeletons (without the page heading/shell).
 function TripsSkeleton({ bare }: { bare?: boolean }) {
   const cards = (
     <div className="mt-8 space-y-4">

@@ -1,3 +1,4 @@
+"""SQLAlchemy association model for a user's wishlisted (favorited) listings."""
 from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, func

@@ -1,5 +1,8 @@
 "use client";
 
+// ListingForm: the create/edit form for a host listing. Handles basics, location,
+// pricing & capacity, amenity selection, and photo URLs; validates client-side, then
+// creates or updates via the API (per `mode`) and navigates on success.
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -48,6 +51,7 @@ const EMPTY: ListingFormValues = {
   photo_urls: [],
 };
 
+// Convert a fetched listing into the string-based form values used to prefill the edit form.
 export function listingToForm(listing: ListingDetail): ListingFormValues {
   return {
     title: listing.title,
@@ -69,6 +73,7 @@ export function listingToForm(listing: ListingDetail): ListingFormValues {
   };
 }
 
+// Renders and manages the full listing form: state, validation, amenity loading, and submit.
 export function ListingForm({
   mode,
   listingId,
@@ -342,6 +347,7 @@ export function ListingForm({
   );
 }
 
+// Editable list of photo URLs: add via input/Enter, preview thumbnails, mark the first as cover, and remove.
 function PhotoUrlList({ urls, onChange }: { urls: string[]; onChange: (u: string[]) => void }) {
   const [draft, setDraft] = useState("");
 
@@ -407,6 +413,7 @@ function PhotoUrlList({ urls, onChange }: { urls: string[]; onChange: (u: string
   );
 }
 
+// Card-styled section grouping related form fields under a heading.
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="rounded-2xl border border-line bg-surface p-5 sm:p-6">

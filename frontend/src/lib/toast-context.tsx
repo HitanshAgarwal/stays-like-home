@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Toast notification context: exposes a `toast()` function and renders a stack
+ * of auto-dismissing success/error/info messages fixed at the bottom of the screen.
+ */
+
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 
 import { Icon, type IconName } from "@/components/Icon";
@@ -18,6 +23,7 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 
+// Provides the toast() action and renders the live toast stack for the app.
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const nextId = useRef(1);
@@ -75,6 +81,7 @@ function iconFor(kind: ToastKind): IconName {
   return kind === "success" ? "check_circle" : kind === "error" ? "error" : "info";
 }
 
+// Hook to read the toast context; throws if used outside a ToastProvider.
 export function useToast(): ToastContextValue {
   const ctx = useContext(ToastContext);
   if (ctx === undefined) {

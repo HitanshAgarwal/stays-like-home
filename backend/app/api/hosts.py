@@ -1,3 +1,4 @@
+"""Hosts API router: public aggregate stats for a host (average rating, review and completed-booking counts) used to derive the Superhost badge on the fly."""
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,6 +17,7 @@ SUPERHOST_MIN_COMPLETED = 3
 
 
 def _host_listing_ids(host_id: int) -> Select:
+    """Build a subquery selecting the ids of all listings owned by the given host, for use in aggregate `IN` filters."""
     return select(Listing.id).where(Listing.host_id == host_id)
 
 

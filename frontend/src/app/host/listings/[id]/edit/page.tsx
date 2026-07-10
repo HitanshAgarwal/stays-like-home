@@ -1,5 +1,8 @@
 "use client";
 
+// Edit listing page: auth-guarded host page that loads a listing by id, verifies the
+// current user owns it (else shows forbidden/not-found), and renders the ListingForm in
+// "edit" mode pre-filled with the existing values.
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,6 +13,7 @@ import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import type { ListingDetail } from "@/lib/types";
 
+// Page component: resolves the route id, guards auth + ownership, and renders the edit form.
 export default function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { user, loading: authLoading } = useAuth();
@@ -72,6 +76,7 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
   );
 }
 
+// Centered message screen (not-found / forbidden) with a link back to the dashboard.
 function Message({ title }: { title: string }) {
   return (
     <div className="py-24 text-center">

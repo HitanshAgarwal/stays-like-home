@@ -1,3 +1,4 @@
+"""SQLAlchemy model for guest bookings of listings, including booking status states."""
 from datetime import date, datetime
 from enum import Enum as PyEnum
 
@@ -8,6 +9,8 @@ from app.db.base import Base
 
 
 class BookingStatus(str, PyEnum):
+    """Lifecycle states a booking can be in."""
+
     PENDING = "pending"
     CONFIRMED = "confirmed"
     CANCELLED = "cancelled"
@@ -15,6 +18,8 @@ class BookingStatus(str, PyEnum):
 
 
 class Booking(Base):
+    """A reservation of a listing by a guest for a date range, with pricing snapshotted at booking time."""
+
     __tablename__ = "bookings"
     __table_args__ = (
         CheckConstraint("check_out > check_in", name="ck_booking_dates_valid"),

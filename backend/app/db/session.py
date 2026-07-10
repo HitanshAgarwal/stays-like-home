@@ -1,3 +1,5 @@
+"""Async SQLAlchemy engine/session setup, including SQLite pragmas and BEGIN IMMEDIATE for race-safe bookings."""
+
 from collections.abc import AsyncGenerator
 
 from sqlalchemy import event
@@ -22,6 +24,7 @@ if engine.url.get_backend_name() == "sqlite":
 
     @event.listens_for(engine.sync_engine, "connect")
     def _sqlite_on_connect(dbapi_conn, _record):
+        """Per-connection SQLite setup: enable foreign keys, set a busy timeout, and cede transaction control to SQLAlchemy."""
         dbapi_conn.execute("PRAGMA foreign_keys=ON")
         # if another connection holds the write lock, wait up to 5s for it to
         # commit instead of failing immediately with SQLITE_BUSY. This is what
@@ -34,6 +37,7 @@ if engine.url.get_backend_name() == "sqlite":
 
     @event.listens_for(engine.sync_engine, "begin")
     def _sqlite_begin_immediate(conn):
+        """Start every SQLite transaction with BEGIN IMMEDIATE so the write lock is taken up front, serializing conflicting bookings."""
         conn.exec_driver_sql("BEGIN IMMEDIATE")
 
 
@@ -41,5 +45,6 @@ AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=As
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """FastAPI dependency that yields an async session and closes it when the request ends."""
     async with AsyncSessionLocal() as session:
         yield session

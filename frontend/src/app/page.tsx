@@ -1,5 +1,9 @@
 "use client";
 
+// Explore/home page: the main listing search + browse experience. Search and filter
+// state lives in the URL (shareable, back-button safe); it fetches listings from the
+// API per those params, applies client-side amenity filtering, and renders a paginated
+// grid of ListingCards with loading skeletons, empty, and error states.
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -12,6 +16,7 @@ import type { Listing } from "@/lib/types";
 
 const PAGE_SIZE = 12;
 
+// Page entry point; wraps the inner UI in a Suspense boundary required for useSearchParams.
 export default function ExplorePage() {
   return (
     // useSearchParams requires a Suspense boundary in the app router
@@ -21,6 +26,8 @@ export default function ExplorePage() {
   );
 }
 
+// Core explore UI: derives search/filter/page state from the URL, fetches matching
+// listings, filters by amenities client-side, and renders the search bar, filters, and grid.
 function ExploreInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -185,6 +192,7 @@ function ExploreInner() {
   );
 }
 
+// Responsive grid wrapper for listing cards / skeletons.
 function CardGrid({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -193,6 +201,7 @@ function CardGrid({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Previous/Next pager with the current page indicator.
 function Pagination({
   page,
   totalPages,
@@ -217,6 +226,7 @@ function Pagination({
   );
 }
 
+// Single pagination button (Previous/Next) with a disabled state.
 function PageBtn({
   children,
   onClick,
@@ -238,6 +248,7 @@ function PageBtn({
   );
 }
 
+// Shown when the search/filters return no listings.
 function EmptyState() {
   return (
     <div className="py-20 text-center">
@@ -247,6 +258,7 @@ function EmptyState() {
   );
 }
 
+// Shown when the listings request fails, displaying the error message.
 function ErrorState({ message }: { message: string }) {
   return (
     <div className="py-20 text-center">
@@ -256,6 +268,7 @@ function ErrorState({ message }: { message: string }) {
   );
 }
 
+// Suspense fallback: a full grid of skeleton cards shown before the inner UI mounts.
 function ExploreFallback() {
   return (
     <div className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 lg:px-10">

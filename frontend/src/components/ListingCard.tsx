@@ -1,5 +1,8 @@
 "use client";
 
+// ListingCard: the grid card for a single listing. Shows a hover-zoom photo carousel with
+// dots, a wishlist heart, an optional Superhost badge, and the location/title/type/price,
+// all linking through to the listing detail page.
 import Link from "next/link";
 import { useState } from "react";
 
@@ -10,6 +13,7 @@ import { useToast } from "@/lib/toast-context";
 import { useWishlist } from "@/lib/wishlist-context";
 import { SuperhostBadge } from "@/components/SuperhostBadge";
 
+// Renders the card image area (carousel + heart + badge) and the text block below.
 export function ListingCard({ listing }: { listing: Listing }) {
   const photos = listing.photos.length > 0 ? listing.photos : [];
   const [active, setActive] = useState(0);
@@ -78,6 +82,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
   );
 }
 
+// Rating indicator; the list endpoint has no rating, so it always reads "New".
 function Rating() {
   // The list endpoint doesn't return a per-listing rating, so unrated cards
   // read as "New" (Airbnb's own convention) rather than showing a fake number.
@@ -89,6 +94,7 @@ function Rating() {
   );
 }
 
+// Heart toggle that saves/removes the listing from the wishlist (prompts login if signed out).
 function WishlistHeart({ listingId }: { listingId: number }) {
   const { user } = useAuth();
   const { isWishlisted, toggle } = useWishlist();
@@ -139,6 +145,7 @@ function WishlistHeart({ listingId }: { listingId: number }) {
   );
 }
 
+// Left/right overlay arrow for advancing the photo carousel.
 function CarouselButton({ side, onClick }: { side: "left" | "right"; onClick: () => void }) {
   return (
     <button
@@ -163,6 +170,7 @@ function CarouselButton({ side, onClick }: { side: "left" | "right"; onClick: ()
   );
 }
 
+// Inline star glyph for the rating indicator.
 function StarIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 24 24" className="fill-ink" aria-hidden="true">

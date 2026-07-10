@@ -1,5 +1,8 @@
 "use client";
 
+// Host dashboard: lists the signed-in host's own listings with per-listing booking
+// counts, plus links to create, edit, or delete them. Requires auth (redirects to login)
+// and confirms deletions through a ConfirmDialog.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,6 +16,7 @@ import { formatPrice } from "@/lib/format";
 import { useToast } from "@/lib/toast-context";
 import type { Booking, Listing } from "@/lib/types";
 
+// Host dashboard component: guards auth, loads the host's listings, and manages the delete flow.
 export default function HostDashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -112,6 +116,7 @@ export default function HostDashboardPage() {
   );
 }
 
+// A single listing row: cover, details, live booking counts (fetched per listing), upcoming-stay preview, and edit/delete actions.
 function HostListingCard({ listing, onDelete }: { listing: Listing; onDelete: () => void }) {
   const [bookings, setBookings] = useState<Booking[] | null>(null);
 
@@ -206,6 +211,7 @@ function HostListingCard({ listing, onDelete }: { listing: Listing; onDelete: ()
   );
 }
 
+// Empty state shown when the host has no listings, with a CTA to create their first.
 function EmptyState() {
   return (
     <div className="mt-10 rounded-2xl border border-line bg-surface p-10 text-center">
@@ -221,6 +227,7 @@ function EmptyState() {
   );
 }
 
+// Loading placeholder; `bare` renders just the card skeletons (without the page heading/shell).
 function DashboardSkeleton({ bare }: { bare?: boolean }) {
   const cards = (
     <div className="mt-8 space-y-4">

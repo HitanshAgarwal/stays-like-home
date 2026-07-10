@@ -1,5 +1,8 @@
 "use client";
 
+// FilterRow: the explore page's filter bar. Shows scrollable property-type chips inline
+// plus a "Filters" button that opens a modal panel for price range and amenity selection.
+// Reports the updated Filters (property type, min/max price, amenities) via onChange.
 import { useEffect, useRef, useState } from "react";
 
 import { Icon, type IconName } from "@/components/Icon";
@@ -35,6 +38,7 @@ export const ALL_AMENITIES = [
   "Gym",
 ];
 
+// Renders the property-type chips and the Filters button (with an active-filter count badge).
 export function FilterRow({
   filters,
   onChange,
@@ -99,6 +103,7 @@ export function FilterRow({
   );
 }
 
+// Modal dialog for editing price range and amenities; applies changes on "Show results".
 function FilterPanel({
   filters,
   onApply,
@@ -216,6 +221,7 @@ function FilterPanel({
   );
 }
 
+// Labeled numeric price input with a currency prefix (used for Min/Max).
 function PriceInput({
   label,
   value,
@@ -243,6 +249,7 @@ function PriceInput({
   );
 }
 
+// Inline sliders icon for the Filters button.
 function FilterIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">

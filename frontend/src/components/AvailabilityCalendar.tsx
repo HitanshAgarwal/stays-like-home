@@ -1,5 +1,8 @@
 "use client";
 
+// AvailabilityCalendar: a two-month date-range picker for the reserve flow. It disables
+// past days and booked nights, lets the user tap a start then an end date, and rejects
+// ranges that would span an already-booked night by restarting the selection.
 import { useMemo, useState } from "react";
 
 import { Icon } from "@/components/Icon";
@@ -15,6 +18,7 @@ interface Props {
   months?: number;
 }
 
+// Renders the month grids, handles month navigation, and reports check-in/out changes via onChange.
 export function AvailabilityCalendar({
   bookedNights,
   bookedRanges,
@@ -49,6 +53,7 @@ export function AvailabilityCalendar({
   }
 
   const monthGrids = useMemo(() => {
+    // build one grid per visible month starting from viewStart
     return Array.from({ length: months }, (_, i) => {
       const base = new Date(viewStart.getFullYear(), viewStart.getMonth() + i, 1);
       return { base, weeks: buildMonth(base) };

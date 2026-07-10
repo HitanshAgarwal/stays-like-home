@@ -1,11 +1,13 @@
 "use client";
 
+// New listing page: auth-guarded host page that renders the ListingForm in "create" mode.
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { ListingForm } from "@/components/ListingForm";
 import { useAuth } from "@/lib/auth-context";
 
+// Page component: redirects unauthenticated users to login, otherwise shows the create form.
 export default function NewListingPage() {
   const { user, loading } = useAuth();
   const router = useRouter();

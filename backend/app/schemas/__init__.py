@@ -1,3 +1,4 @@
+"""Aggregates and re-exports the application's Pydantic request/response schemas."""
 from app.schemas.auth import Token
 from app.schemas.listing import (
     AmenityOut,

@@ -1,3 +1,4 @@
+"""Reviews API router: lets a guest review their own completed stay (one review per booking) and exposes a listing's paginated reviews."""
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -19,6 +20,7 @@ async def create_review(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> ReviewOut:
+    """Create a review for the current user's own booking, allowed only once the stay is completed; a duplicate (enforced by a unique index on booking_id) is turned into a 400."""
     booking = await db.get(Booking, payload.booking_id)
     if booking is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
@@ -65,6 +67,7 @@ async def list_listing_reviews(
     page_size: int = Query(default=20, ge=1, le=50),
     db: AsyncSession = Depends(get_db),
 ) -> ReviewListOut:
+    """Return a listing's reviews (newest first) with author info, paginated (404 if the listing is missing)."""
     listing = await db.get(Listing, listing_id)
     if listing is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")

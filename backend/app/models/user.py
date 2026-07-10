@@ -1,3 +1,4 @@
+"""SQLAlchemy model for user accounts, who can act as both hosts and guests."""
 from datetime import datetime
 
 from sqlalchemy import DateTime, String, func
@@ -7,6 +8,8 @@ from app.db.base import Base
 
 
 class User(Base):
+    """A registered account with credentials and profile, linked to its listings, bookings, reviews, and wishlist."""
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)

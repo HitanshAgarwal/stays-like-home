@@ -1,5 +1,8 @@
 "use client";
 
+// ExploreSearch: the home page's expandable search control. Collapsed it shows a summary
+// pill (destination / dates / guests); expanded it exposes destination, check-in/out, and
+// a guest stepper, emitting the chosen values via onSearch. Closes on outside click.
 import { useEffect, useRef, useState } from "react";
 
 export interface SearchValues {
@@ -9,6 +12,7 @@ export interface SearchValues {
   guests: number;
 }
 
+// Renders the collapsed pill / expanded panel and submits the search values on Search.
 export function ExploreSearch({
   initial,
   onSearch,
@@ -131,6 +135,7 @@ export function ExploreSearch({
   );
 }
 
+// Numeric +/- stepper (used for the guest count), clamped to [min, max].
 function Stepper({
   value,
   min,
@@ -155,6 +160,7 @@ function Stepper({
   );
 }
 
+// Single round increment/decrement button used inside the Stepper.
 function StepButton({
   children,
   onClick,
@@ -179,6 +185,7 @@ function StepButton({
   );
 }
 
+// Inline magnifying-glass icon for the search buttons.
 function SearchIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">

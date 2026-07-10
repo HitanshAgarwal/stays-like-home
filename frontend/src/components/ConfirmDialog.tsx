@@ -1,7 +1,10 @@
 "use client";
 
+// ConfirmDialog: a modal alert-dialog for confirming an action (e.g. deletions). Supports
+// a destructive style, a busy/pending state, and dismissal via the Cancel button or Escape.
 import { useEffect } from "react";
 
+// Renders the overlay + dialog and wires up Escape-to-cancel; calls onConfirm/onCancel.
 export function ConfirmDialog({
   title,
   message,

@@ -1,3 +1,4 @@
+"""Amenities API router: read-only endpoints exposing the catalog of amenities used to populate the listing form's multi-select."""
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

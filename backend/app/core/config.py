@@ -1,7 +1,11 @@
+"""Application configuration loaded from environment variables (with an optional .env file)."""
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """Typed application settings, populated from the environment / .env with sensible defaults."""
+
     DATABASE_URL: str = "sqlite+aiosqlite:///./stayslikehome.db"
     SECRET_KEY: str = "dev-secret-change-in-prod"
     ALGORITHM: str = "HS256"

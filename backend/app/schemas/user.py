@@ -1,9 +1,12 @@
+"""Pydantic schemas for user registration, login, and public output."""
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserCreate(BaseModel):
+    """Request body for registering a new user account."""
+
     email: EmailStr
     # bcrypt only uses the first 72 bytes of a password
     password: str = Field(min_length=8, max_length=72)
@@ -11,11 +14,15 @@ class UserCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
+    """Request body for authenticating an existing user."""
+
     email: EmailStr
     password: str
 
 
 class UserOut(BaseModel):
+    """A user's public profile as returned to clients (excludes the password hash)."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int

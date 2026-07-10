@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Authentication context: holds the current user, restores the session from a
+ * stored token on mount, and exposes login/register/logout actions.
+ */
+
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 import { api, clearToken, getToken, setToken } from "./api";
@@ -15,6 +20,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+// Provides auth state to the tree and resolves any stored token to a user on mount.
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   // starts true so consumers can show a neutral state until the token check resolves
@@ -67,6 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Hook to read the auth context; throws if used outside an AuthProvider.
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
   if (ctx === undefined) {

@@ -1,3 +1,13 @@
+"""Bookings API router for the Airbnb-clone.
+
+Creating a booking is serialized through SQLite's single writer: the shared
+engine opens every transaction as BEGIN IMMEDIATE (see db/session.py), so
+``create_booking`` holds the write lock across its overlap check and insert.
+Two racing requests for the same dates therefore cannot interleave -- one
+commits, the other blocks and then sees the committed row and is rejected with
+409. Booking status is stored as-is and the "completed" state is derived at
+read time (see ``effective_status``) rather than by a scheduler.
+"""
 from datetime import date
 from decimal import Decimal
 
@@ -50,6 +60,16 @@ async def create_booking(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> BookingOut:
+    """Create a confirmed booking for the current user, serialized so concurrent requests can't double-book.
+
+    Because the shared engine begins every transaction as BEGIN IMMEDIATE, this
+    handler already holds SQLite's single write lock (get_current_user's read
+    opened the transaction), and keeps it through the availability check and the
+    insert until commit. It validates the listing exists and honors max_guests,
+    rejects any date overlap with an existing confirmed booking (409), snapshots
+    the listing's current nightly rate and cleaning fee onto the row so later
+    host price edits don't reprice this stay, and rolls back on any error.
+    """
     # --- the critical section --------------------------------------------------
     # Every transaction on this engine begins as BEGIN IMMEDIATE (see db/session.py),
     # so the moment this session touches the DB it holds SQLite's single write lock,
@@ -114,6 +134,7 @@ async def my_bookings(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[BookingWithListingOut]:
+    """List the current user's bookings (newest stay first), each with a compact listing summary and cover photo."""
     rows = (
         await db.scalars(
             select(Booking)
@@ -131,6 +152,7 @@ async def listing_bookings(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[BookingOut]:
+    """List all bookings for a listing, restricted to that listing's host (403 otherwise, 404 if the listing is missing)."""
     listing = await db.get(Listing, listing_id)
     if listing is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
@@ -155,6 +177,7 @@ async def cancel_booking(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> BookingOut:
+    """Cancel a booking, allowed for either the guest or the listing's host; 404 if missing, 409 if already cancelled."""
     booking = await db.scalar(
         select(Booking).where(Booking.id == booking_id).options(selectinload(Booking.listing))
     )
@@ -178,12 +201,14 @@ async def cancel_booking(
 
 
 def _to_booking_out(booking: Booking) -> BookingOut:
+    """Serialize a booking to BookingOut with its read-time effective status applied."""
     out = BookingOut.model_validate(booking)
     out.status = effective_status(booking)
     return out
 
 
 def _to_with_listing(booking: Booking) -> BookingWithListingOut:
+    """Serialize a booking to BookingWithListingOut, applying effective status and embedding a compact listing summary."""
     listing = booking.listing
     out = BookingWithListingOut.model_validate(booking)
     out.status = effective_status(booking)
@@ -197,6 +222,7 @@ def _to_with_listing(booking: Booking) -> BookingWithListingOut:
 
 
 def _cover_photo(photos: list[ListingPhoto]) -> str | None:
+    """Pick a listing's cover image URL: the photo flagged is_cover, else the lowest-position photo, or None if there are none."""
     if not photos:
         return None
     for p in photos:

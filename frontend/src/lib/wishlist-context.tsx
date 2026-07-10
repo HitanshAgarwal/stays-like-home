@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Wishlist context: tracks the set of listing ids the current user has saved,
+ * reloading on auth changes and exposing an optimistic toggle that rolls back on error.
+ */
+
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 import { api, ApiError } from "./api";
@@ -16,6 +21,7 @@ interface WishlistContextValue {
 
 const WishlistContext = createContext<WishlistContextValue | undefined>(undefined);
 
+// Provides wishlist state and the optimistic toggle action, synced to the logged-in user.
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [ids, setIds] = useState<Set<number>>(new Set());
@@ -91,6 +97,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Hook to read the wishlist context; throws if used outside a WishlistProvider.
 export function useWishlist(): WishlistContextValue {
   const ctx = useContext(WishlistContext);
   if (ctx === undefined) {

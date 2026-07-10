@@ -1,3 +1,4 @@
+"""Pydantic schemas for listings and their related amenities, photos, hosts, reviews, and availability."""
 from datetime import date, datetime
 from typing import Annotated
 
@@ -7,6 +8,8 @@ PhotoUrl = Annotated[str, Field(min_length=1, max_length=500)]
 
 
 class AmenityOut(BaseModel):
+    """An amenity as returned to clients."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -15,6 +18,8 @@ class AmenityOut(BaseModel):
 
 
 class ListingPhotoOut(BaseModel):
+    """A listing photo as returned to clients."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -34,6 +39,8 @@ class HostOut(BaseModel):
 
 
 class ReviewOut(BaseModel):
+    """A review summary embedded in listing detail responses."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -46,10 +53,13 @@ class ReviewOut(BaseModel):
     @field_validator("author_name", mode="before")
     @classmethod
     def _author_to_name(cls, value):
+        """Accept either an author object (extract its name) or an already-resolved name string."""
         return getattr(value, "name", value)
 
 
 class ListingBase(BaseModel):
+    """Shared, validated listing fields common to create and output schemas."""
+
     title: str = Field(min_length=1, max_length=200)
     description: str = Field(min_length=1, max_length=4000)
     property_type: str = Field(min_length=1, max_length=50)
@@ -67,11 +77,15 @@ class ListingBase(BaseModel):
 
 
 class ListingCreate(ListingBase):
+    """Request body for creating a listing, with amenity and photo references."""
+
     amenity_ids: list[int] = []
     photo_urls: list[PhotoUrl] = []
 
 
 class ListingUpdate(BaseModel):
+    """Request body for partially updating a listing; all fields optional."""
+
     title: str | None = Field(default=None, min_length=1, max_length=200)
     description: str | None = Field(default=None, min_length=1, max_length=4000)
     property_type: str | None = Field(default=None, min_length=1, max_length=50)
@@ -92,6 +106,8 @@ class ListingUpdate(BaseModel):
 
 
 class ListingOut(ListingBase):
+    """A listing as returned to clients, with its photos and amenities."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -106,16 +122,21 @@ class ListingOut(ListingBase):
     @field_validator("amenities", mode="before")
     @classmethod
     def _links_to_amenities(cls, value):
+        """Unwrap association rows to their Amenity objects, passing through already-plain amenities."""
         return [getattr(item, "amenity", item) for item in value]
 
 
 class ListingDetailOut(ListingOut):
+    """Full listing detail response, adding host info, reviews, and average rating."""
+
     host: HostOut
     reviews: list[ReviewOut] = []
     average_rating: float | None = None
 
 
 class ListingListOut(BaseModel):
+    """Paginated collection of listings."""
+
     items: list[ListingOut]
     total: int
     page: int
@@ -130,5 +151,7 @@ class BookedRange(BaseModel):
 
 
 class AvailabilityOut(BaseModel):
+    """A listing's availability, expressed as the set of already-booked date ranges."""
+
     listing_id: int
     booked_ranges: list[BookedRange]

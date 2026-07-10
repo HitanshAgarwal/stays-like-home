@@ -1,5 +1,8 @@
 "use client";
 
+// Listing detail page: fetches a single listing (and its best-effort availability) by id
+// and renders the full detail view — photo gallery, host + specs, description, amenities,
+// location, reviews, and the sticky ReservePanel that drives the booking flow.
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
@@ -12,6 +15,7 @@ import { formatDateShort } from "@/lib/dates";
 import { titleCase } from "@/lib/format";
 import type { Availability, ListingDetail } from "@/lib/types";
 
+// Page component: loads the listing + availability and renders the detail layout with the reserve panel.
 export default function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params); // Next 16: params is a promise
 
@@ -197,6 +201,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
   );
 }
 
+// Loading placeholder mirroring the detail page layout while data is fetched.
 function DetailSkeleton() {
   return (
     <div className="mx-auto max-w-6xl animate-pulse px-4 py-6 sm:px-6 lg:px-10">
@@ -215,6 +220,7 @@ function DetailSkeleton() {
   );
 }
 
+// Shown when the listing can't be found (or failed to load), with a link back to explore.
 function NotFound() {
   return (
     <div className="py-24 text-center">
@@ -227,6 +233,7 @@ function NotFound() {
   );
 }
 
+// Derive up-to-two-letter initials from a name for avatar placeholders.
 function initials(name: string): string {
   return name
     .trim()
@@ -236,6 +243,7 @@ function initials(name: string): string {
     .join("");
 }
 
+// Map an amenity's icon key to a Material icon name, falling back to a generic check.
 function amenityIcon(icon: string | null): IconName {
   const map: Record<string, IconName> = {
     wifi: "wifi",
@@ -254,6 +262,7 @@ function amenityIcon(icon: string | null): IconName {
   return (icon && map[icon]) || "check";
 }
 
+// Inline star glyph used for ratings and review stars.
 function StarIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" className="inline fill-current" aria-hidden="true">
@@ -262,6 +271,7 @@ function StarIcon() {
   );
 }
 
+// Decorative middot separator between inline metadata items.
 function Dot() {
   return <span aria-hidden="true">·</span>;
 }

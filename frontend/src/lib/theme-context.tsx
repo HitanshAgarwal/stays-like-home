@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Theme context: tracks light/dark mode, persists the choice to localStorage,
+ * and toggles the `dark` class on the document root. Includes a pre-hydration
+ * init script to apply the stored theme without a flash of the wrong theme.
+ */
+
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
@@ -24,6 +30,7 @@ export const themeInitScript = `
 })();
 `;
 
+// Provides theme state to the tree, syncing with the class the init script applied.
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
@@ -57,6 +64,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>;
 }
 
+// Hook to read the theme context; throws if used outside a ThemeProvider.
 export function useTheme(): ThemeContextValue {
   const ctx = useContext(ThemeContext);
   if (ctx === undefined) {

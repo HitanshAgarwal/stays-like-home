@@ -1,3 +1,4 @@
+"""SQLAlchemy model for guest reviews left on a listing after a completed booking."""
 from datetime import datetime
 
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String, func
@@ -7,6 +8,8 @@ from app.db.base import Base
 
 
 class Review(Base):
+    """A 1-5 star rating with optional comment, tied to exactly one booking (one review per stay)."""
+
     __tablename__ = "reviews"
     __table_args__ = (CheckConstraint("rating >= 1 AND rating <= 5", name="ck_review_rating_range"),)
 

@@ -1,3 +1,4 @@
+"""SQLAlchemy model for property listings, the central entity hosts publish for guests to book."""
 from datetime import datetime
 
 from sqlalchemy import DateTime, Float, ForeignKey, Integer, Numeric, String, func
@@ -7,6 +8,8 @@ from app.db.base import Base
 
 
 class Listing(Base):
+    """A property a host offers for stays, with location, pricing, capacity, and related photos/amenities/bookings/reviews."""
+
     __tablename__ = "listings"
 
     id: Mapped[int] = mapped_column(primary_key=True)
