@@ -1,3 +1,4 @@
+from datetime import date
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -11,6 +12,21 @@ from app.models import Booking, BookingStatus, Listing, ListingPhoto, User
 from app.schemas.booking import BookingCreate, BookingListingOut, BookingOut, BookingWithListingOut
 
 router = APIRouter(prefix="/api/bookings", tags=["bookings"])
+
+
+def effective_status(booking: Booking, today: date | None = None) -> str:
+    """A confirmed booking whose stay is over reads as 'completed'.
+
+    Bookings never auto-transition in storage; we derive the completed state at read
+    time instead of running a scheduler. A stay counts as over once its checkout day
+    has arrived (check_out is the departure day, so the guest may review on that day).
+    Cancelled/pending/already-completed rows are returned unchanged.
+    """
+    if today is None:
+        today = date.today()
+    if booking.status == BookingStatus.CONFIRMED.value and booking.check_out <= today:
+        return BookingStatus.COMPLETED.value
+    return booking.status
 
 
 def _overlap_clause(listing_id: int, check_in, check_out):
@@ -130,7 +146,7 @@ async def listing_bookings(
             .order_by(Booking.check_in.desc(), Booking.id.desc())
         )
     ).all()
-    return [BookingOut.model_validate(b) for b in rows]
+    return [_to_booking_out(b) for b in rows]
 
 
 @router.patch("/{booking_id}/cancel", response_model=BookingOut)
@@ -161,9 +177,16 @@ async def cancel_booking(
     return BookingOut.model_validate(booking)
 
 
+def _to_booking_out(booking: Booking) -> BookingOut:
+    out = BookingOut.model_validate(booking)
+    out.status = effective_status(booking)
+    return out
+
+
 def _to_with_listing(booking: Booking) -> BookingWithListingOut:
     listing = booking.listing
     out = BookingWithListingOut.model_validate(booking)
+    out.status = effective_status(booking)
     out.listing = BookingListingOut(
         id=listing.id,
         title=listing.title,
