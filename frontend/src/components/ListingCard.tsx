@@ -155,7 +155,7 @@ function CarouselButton({ side, onClick }: { side: "left" | "right"; onClick: ()
         onClick();
       }}
       aria-label={side === "left" ? "Previous photo" : "Next photo"}
-      className={`absolute top-1/2 z-10 hidden h-7 w-7 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink opacity-0 shadow transition-opacity hover:bg-white group-hover:opacity-100 sm:grid ${
+      className={`absolute top-1/2 z-10 hidden h-7 w-7 -translate-y-1/2 place-items-center rounded-full bg-surface/90 text-ink opacity-0 shadow transition-opacity hover:bg-surface group-hover:opacity-100 sm:grid ${
         side === "left" ? "left-2" : "right-2"
       }`}
     >
