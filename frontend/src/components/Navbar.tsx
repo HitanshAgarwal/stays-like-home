@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/lib/auth-context";
 
 export function Navbar() {
   const { user, logout, loading } = useAuth();
+  const pathname = usePathname();
+  // The explore page renders its own functional search, so hide the nav
+  // placeholder there to avoid two search bars stacked on top of each other.
+  const showSearch = pathname !== "/";
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -38,8 +43,9 @@ export function Navbar() {
           </span>
         </Link>
 
-        {/* search placeholder — segmented on desktop, single pill on mobile */}
-        <SearchBar />
+        {/* search placeholder — segmented on desktop, single pill on mobile.
+            Hidden on the explore page, which renders its own functional search. */}
+        {showSearch ? <SearchBar /> : <div className="flex-1" />}
 
         {/* right side */}
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
