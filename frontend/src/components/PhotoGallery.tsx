@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { Icon } from "@/components/Icon";
 import type { ListingPhoto } from "@/lib/types";
 
 export function PhotoGallery({ photos, title }: { photos: ListingPhoto[]; title: string }) {
@@ -103,8 +104,8 @@ function Lightbox({
         <span className="text-sm">
           {index + 1} / {photos.length}
         </span>
-        <button type="button" onClick={onClose} aria-label="Close gallery" className="text-2xl">
-          ✕
+        <button type="button" onClick={onClose} aria-label="Close gallery">
+          <Icon name="close" size={24} />
         </button>
       </div>
       <div className="relative flex flex-1 items-center justify-center px-4 pb-6">
@@ -127,11 +128,11 @@ function NavArrow({ side, onClick }: { side: "left" | "right"; onClick: () => vo
       type="button"
       onClick={onClick}
       aria-label={side === "left" ? "Previous" : "Next"}
-      className={`absolute top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-xl text-ink hover:bg-white ${
+      className={`absolute top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink hover:bg-white ${
         side === "left" ? "left-4" : "right-4"
       }`}
     >
-      {side === "left" ? "‹" : "›"}
+      <Icon name={side === "left" ? "chevron_left" : "chevron_right"} size={22} />
     </button>
   );
 }

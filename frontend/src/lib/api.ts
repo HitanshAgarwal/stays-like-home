@@ -10,6 +10,7 @@ import type {
   Availability,
   Booking,
   BookingWithListing,
+  HostStats,
   Listing,
   ListingDetail,
   ListingList,
@@ -117,6 +118,11 @@ export const api = {
 
   amenities: {
     list: () => request<Amenity[]>("/api/amenities", { auth: false }),
+  },
+
+  hosts: {
+    stats: (id: number | string) =>
+      request<HostStats>(`/api/hosts/${id}/stats`, { auth: false }),
   },
 
   listings: {

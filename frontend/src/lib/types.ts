@@ -91,6 +91,14 @@ export interface Booking {
   created_at: string;
 }
 
+export interface HostStats {
+  host_id: number;
+  average_rating: number | null;
+  review_count: number;
+  completed_bookings: number;
+  is_superhost: boolean;
+}
+
 export interface BookedRange {
   check_in: string;
   check_out: string;

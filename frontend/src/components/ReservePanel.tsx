@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
+import { Icon } from "@/components/Icon";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { blockedNightSet, formatDateRange, nightsBetween, rangeOverlapsBooked } from "@/lib/dates";
@@ -210,7 +211,7 @@ function ConfirmModal({
             aria-label="Close"
             className="grid h-8 w-8 place-items-center rounded-full text-ink hover:bg-muted"
           >
-            ✕
+            <Icon name="close" size={18} />
           </button>
         </div>
 

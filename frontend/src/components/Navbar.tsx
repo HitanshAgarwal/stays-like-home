@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/lib/auth-context";
+import { useTheme } from "@/lib/theme-context";
 
 export function Navbar() {
   const { user, logout, loading } = useAuth();
@@ -56,6 +57,8 @@ export function Navbar() {
             Become a host
           </Link>
 
+          <ThemeToggle />
+
           <div className="relative" ref={menuRef}>
             <button
               type="button"
@@ -66,7 +69,7 @@ export function Navbar() {
               aria-label="Main menu"
             >
               <MenuIcon />
-              <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-xs font-semibold text-white">
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-contrast text-xs font-semibold text-on-contrast">
                 {user ? initials(user.name) : <UserIcon />}
               </span>
             </button>
@@ -123,6 +126,39 @@ export function Navbar() {
         </div>
       </div>
     </header>
+  );
+}
+
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  const isDark = theme === "dark";
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Light mode" : "Dark mode"}
+      className="grid h-9 w-9 place-items-center rounded-full text-ink transition-colors hover:bg-muted"
+    >
+      {isDark ? <SunIcon /> : <MoonIcon />}
+    </button>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" strokeLinecap="round" />
+    </svg>
   );
 }
 

@@ -6,7 +6,9 @@ import { useState } from "react";
 import { formatPrice } from "@/lib/format";
 import type { Listing } from "@/lib/types";
 import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/lib/toast-context";
 import { useWishlist } from "@/lib/wishlist-context";
+import { SuperhostBadge } from "@/components/SuperhostBadge";
 
 export function ListingCard({ listing }: { listing: Listing }) {
   const photos = listing.photos.length > 0 ? listing.photos : [];
@@ -17,6 +19,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
       {/* image area with heart + carousel */}
       <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted">
         <WishlistHeart listingId={listing.id} />
+        <SuperhostBadge hostId={listing.host_id} className="absolute left-3 top-3 z-10" />
 
         <Link href={`/listings/${listing.id}`} className="block h-full w-full">
           {photos.length > 0 ? (
@@ -89,6 +92,7 @@ function Rating() {
 function WishlistHeart({ listingId }: { listingId: number }) {
   const { user } = useAuth();
   const { isWishlisted, toggle } = useWishlist();
+  const { toast } = useToast();
   const [busy, setBusy] = useState(false);
   const saved = isWishlisted(listingId);
 
@@ -96,15 +100,18 @@ function WishlistHeart({ listingId }: { listingId: number }) {
     e.preventDefault();
     e.stopPropagation();
     if (!user) {
+      toast("Log in to save places to your wishlist.", "info");
       window.location.href = "/login";
       return;
     }
     if (busy) return;
     setBusy(true);
     try {
-      await toggle(listingId);
+      const nowSaved = await toggle(listingId);
+      toast(nowSaved ? "Saved to your wishlist." : "Removed from your wishlist.", "success");
     } catch {
-      // context already rolled back; nothing else to do here
+      // context already rolled back on error
+      toast("Couldn't update your wishlist. Please try again.", "error");
     } finally {
       setBusy(false);
     }

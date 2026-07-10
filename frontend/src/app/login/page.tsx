@@ -6,9 +6,11 @@ import { useState } from "react";
 
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/lib/toast-context";
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { toast } = useToast();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,9 +23,12 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(email, password);
+      toast("Welcome back!", "success");
       router.push("/");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong");
+      const msg = err instanceof ApiError ? err.message : "Something went wrong";
+      setError(msg);
+      toast(msg, "error");
     } finally {
       setSubmitting(false);
     }

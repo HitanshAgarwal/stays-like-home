@@ -50,8 +50,10 @@ export function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={busy}
-            className={`rounded-xl px-4 py-2 text-sm font-semibold text-white transition-colors disabled:opacity-60 ${
-              destructive ? "bg-accent hover:bg-accent-hover" : "bg-ink"
+            className={`rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-60 ${
+              destructive
+                ? "bg-accent text-white hover:bg-accent-hover"
+                : "bg-contrast text-on-contrast"
             }`}
           >
             {busy ? "Working…" : confirmLabel}

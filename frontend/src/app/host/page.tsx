@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { SuperhostBadge } from "@/components/SuperhostBadge";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateRange, todayISO } from "@/lib/dates";
@@ -68,7 +69,10 @@ export default function HostDashboardPage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-10">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">Your listings</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">Your listings</h1>
+            <SuperhostBadge hostId={user.id} />
+          </div>
           <p className="mt-1 text-sm text-ink-soft">Manage the places you host.</p>
         </div>
         <Link

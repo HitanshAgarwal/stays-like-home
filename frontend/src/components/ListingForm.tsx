@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { Icon } from "@/components/Icon";
 import { api, ApiError } from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
 import type { Amenity, ListingDetail } from "@/lib/types";
@@ -296,13 +297,13 @@ export function ListingForm({
                   type="button"
                   onClick={() => toggleAmenity(a.id)}
                   aria-pressed={on}
-                  className={`rounded-full border px-4 py-2 text-sm transition-colors ${
+                  className={`inline-flex items-center gap-1 rounded-full border px-4 py-2 text-sm transition-colors ${
                     on
                       ? "border-ink bg-accent-soft text-ink"
                       : "border-line-strong text-ink-soft hover:border-ink"
                   }`}
                 >
-                  {on ? "✓ " : ""}
+                  {on && <Icon name="check" size={14} />}
                   {a.name}
                 </button>
               );
@@ -394,9 +395,9 @@ function PhotoUrlList({ urls, onChange }: { urls: string[]; onChange: (u: string
                 type="button"
                 onClick={() => onChange(urls.filter((_, idx) => idx !== i))}
                 aria-label="Remove photo"
-                className="shrink-0 rounded-full px-2 text-ink-faint hover:bg-muted hover:text-ink"
+                className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink"
               >
-                ✕
+                <Icon name="close" size={16} />
               </button>
             </li>
           ))}

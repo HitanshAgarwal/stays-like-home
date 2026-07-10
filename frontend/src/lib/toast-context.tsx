@@ -2,6 +2,8 @@
 
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 
+import { Icon, type IconName } from "@/components/Icon";
+
 type ToastKind = "success" | "error" | "info";
 
 interface Toast {
@@ -44,13 +46,15 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             role="status"
             className={`pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl px-4 py-3 text-sm shadow-[var(--shadow-card)] ${
               t.kind === "success"
-                ? "bg-ink text-white"
+                ? "bg-contrast text-on-contrast"
                 : t.kind === "error"
                   ? "bg-accent text-white"
                   : "bg-surface text-ink ring-1 ring-line"
             }`}
           >
-            <span className="mt-0.5 shrink-0">{iconFor(t.kind)}</span>
+            <span className="mt-0.5 shrink-0">
+              <Icon name={iconFor(t.kind)} size={18} />
+            </span>
             <span className="flex-1">{t.message}</span>
             <button
               type="button"
@@ -58,7 +62,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               aria-label="Dismiss"
               className="shrink-0 opacity-70 transition-opacity hover:opacity-100"
             >
-              ✕
+              <Icon name="close" size={16} />
             </button>
           </div>
         ))}
@@ -67,8 +71,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function iconFor(kind: ToastKind): string {
-  return kind === "success" ? "✓" : kind === "error" ? "!" : "•";
+function iconFor(kind: ToastKind): IconName {
+  return kind === "success" ? "check_circle" : kind === "error" ? "error" : "info";
 }
 
 export function useToast(): ToastContextValue {

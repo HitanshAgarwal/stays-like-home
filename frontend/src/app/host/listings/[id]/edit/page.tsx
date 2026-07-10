@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { Icon } from "@/components/Icon";
 import { ListingForm, listingToForm, type ListingFormValues } from "@/components/ListingForm";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
@@ -54,8 +55,12 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-10">
-      <Link href="/host" className="text-sm font-semibold text-accent hover:underline">
-        ← Back to dashboard
+      <Link
+        href="/host"
+        className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
+      >
+        <Icon name="arrow_back" size={16} />
+        Back to dashboard
       </Link>
       <h1 className="mt-2 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
         Edit “{listing?.title}”

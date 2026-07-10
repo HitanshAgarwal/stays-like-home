@@ -41,7 +41,7 @@ export function ExploreSearch({
 
   const summary = [
     city.trim() || "Anywhere",
-    checkIn && checkOut ? `${checkIn} → ${checkOut}` : "Any week",
+    checkIn && checkOut ? `${checkIn} – ${checkOut}` : "Any week",
     guests > 0 ? `${guests} guest${guests > 1 ? "s" : ""}` : "Add guests",
   ];
 

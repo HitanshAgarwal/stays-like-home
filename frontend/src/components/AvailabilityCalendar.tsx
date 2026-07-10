@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { Icon } from "@/components/Icon";
 import { addDays, fromISO, rangeOverlapsBooked, todayISO, toISO } from "@/lib/dates";
 import type { BookedRange } from "@/lib/types";
 
@@ -69,7 +70,7 @@ export function AvailabilityCalendar({
           aria-label="Previous month"
           className="grid h-8 w-8 place-items-center rounded-full border border-line-strong text-ink transition-colors hover:border-ink disabled:opacity-30"
         >
-          ‹
+          <Icon name="chevron_left" size={18} />
         </button>
         <button
           type="button"
@@ -79,7 +80,7 @@ export function AvailabilityCalendar({
           aria-label="Next month"
           className="grid h-8 w-8 place-items-center rounded-full border border-line-strong text-ink transition-colors hover:border-ink"
         >
-          ›
+          <Icon name="chevron_right" size={18} />
         </button>
       </div>
 
@@ -116,7 +117,7 @@ export function AvailabilityCalendar({
                       disabled
                         ? "cursor-not-allowed text-ink-faint line-through"
                         : "text-ink hover:bg-muted",
-                      isStart || isEnd ? "!bg-ink !text-white" : "",
+                      isStart || isEnd ? "!bg-contrast !text-on-contrast" : "",
                       inRange ? "!bg-accent-soft !text-ink" : "",
                     ].join(" ")}
                   >

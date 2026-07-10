@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
+import { Icon, type IconName } from "@/components/Icon";
 import { PhotoGallery } from "@/components/PhotoGallery";
 import { ReservePanel } from "@/components/ReservePanel";
+import { SuperhostBadge } from "@/components/SuperhostBadge";
 import { api, ApiError } from "@/lib/api";
 import { formatDateShort } from "@/lib/dates";
 import { titleCase } from "@/lib/format";
@@ -86,6 +88,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               <h2 className="text-xl font-semibold text-ink">
                 {titleCase(listing.property_type)} hosted by {listing.host.name}
               </h2>
+              <div className="mt-1">
+                <SuperhostBadge hostId={listing.host_id} />
+              </div>
               <p className="mt-1 text-sm text-ink-soft">
                 {listing.max_guests} guests · {listing.bedrooms} bedroom
                 {listing.bedrooms === 1 ? "" : "s"} · {listing.beds} bed
@@ -94,7 +99,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </p>
             </div>
             <div
-              className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-ink text-sm font-semibold text-white"
+              className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-contrast text-sm font-semibold text-on-contrast"
               aria-hidden="true"
             >
               {initials(listing.host.name)}
@@ -113,8 +118,8 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {listing.amenities.map((a) => (
                   <li key={a.id} className="flex items-center gap-3 text-ink">
-                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-muted text-sm">
-                      {amenityGlyph(a.icon)}
+                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-muted">
+                      <Icon name={amenityIcon(a.icon)} size={18} />
                     </span>
                     {a.name}
                   </li>
@@ -132,8 +137,8 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               {listing.address}, {listing.city}, {listing.country}
             </p>
             <div className="mt-4 grid aspect-[16/9] w-full place-items-center rounded-2xl border border-line bg-muted text-center text-sm text-ink-faint">
-              <div>
-                <p className="text-2xl">🗺️</p>
+              <div className="flex flex-col items-center">
+                <Icon name="map" size={32} />
                 <p className="mt-1">Map coming soon</p>
                 <p className="text-xs">
                   {listing.latitude.toFixed(3)}, {listing.longitude.toFixed(3)}
@@ -231,22 +236,22 @@ function initials(name: string): string {
     .join("");
 }
 
-function amenityGlyph(icon: string | null): string {
-  const map: Record<string, string> = {
-    wifi: "📶",
-    kitchen: "🍳",
-    pool: "🏊",
-    parking: "🅿️",
-    ac: "❄️",
-    washer: "🧺",
-    workspace: "💻",
-    pets: "🐾",
-    hottub: "♨️",
-    heating: "🔥",
-    ev: "🔌",
-    gym: "🏋️",
+function amenityIcon(icon: string | null): IconName {
+  const map: Record<string, IconName> = {
+    wifi: "wifi",
+    kitchen: "kitchen",
+    pool: "pool",
+    parking: "local_parking",
+    ac: "ac_unit",
+    washer: "local_laundry_service",
+    workspace: "laptop",
+    pets: "pets",
+    hottub: "hot_tub",
+    heating: "local_fire_department",
+    ev: "ev_station",
+    gym: "fitness_center",
   };
-  return (icon && map[icon]) || "✓";
+  return (icon && map[icon]) || "check";
 }
 
 function StarIcon() {

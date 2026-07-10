@@ -6,10 +6,12 @@ import { useState } from "react";
 
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/lib/toast-context";
 import { AuthShell, Field, SubmitButton } from "../login/page";
 
 export default function RegisterPage() {
   const { register } = useAuth();
+  const { toast } = useToast();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,9 +25,12 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       await register(name, email, password);
+      toast("Account created — welcome to Stays Like Home!", "success");
       router.push("/");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong");
+      const msg = err instanceof ApiError ? err.message : "Something went wrong";
+      setError(msg);
+      toast(msg, "error");
     } finally {
       setSubmitting(false);
     }

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { Icon, type IconName } from "@/components/Icon";
+
 export interface Filters {
   property_type: string;
   min_price: string;
@@ -9,14 +11,14 @@ export interface Filters {
   amenities: string[]; // amenity names, filtered client-side
 }
 
-const PROPERTY_TYPES: { value: string; label: string; icon: string }[] = [
-  { value: "", label: "All", icon: "✦" },
-  { value: "apartment", label: "Apartments", icon: "🏢" },
-  { value: "house", label: "Houses", icon: "🏠" },
-  { value: "villa", label: "Villas", icon: "🏖️" },
-  { value: "cabin", label: "Cabins", icon: "🌲" },
-  { value: "boat", label: "Boats", icon: "⛵" },
-  { value: "tent", label: "Tents", icon: "⛺" },
+const PROPERTY_TYPES: { value: string; label: string; icon: IconName }[] = [
+  { value: "", label: "All", icon: "auto_awesome" },
+  { value: "apartment", label: "Apartments", icon: "apartment" },
+  { value: "house", label: "Houses", icon: "home" },
+  { value: "villa", label: "Villas", icon: "villa" },
+  { value: "cabin", label: "Cabins", icon: "cabin" },
+  { value: "boat", label: "Boats", icon: "sailing" },
+  { value: "tent", label: "Tents", icon: "camping" },
 ];
 
 export const ALL_AMENITIES = [
@@ -57,11 +59,11 @@ export function FilterRow({
               onClick={() => onChange({ ...filters, property_type: pt.value })}
               className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 active
-                  ? "border-ink bg-ink text-white"
+                  ? "border-contrast bg-contrast text-on-contrast"
                   : "border-line-strong bg-surface text-ink hover:border-ink"
               }`}
             >
-              <span aria-hidden="true">{pt.icon}</span>
+              <Icon name={pt.icon} size={16} />
               {pt.label}
             </button>
           );
@@ -77,7 +79,7 @@ export function FilterRow({
         <FilterIcon />
         Filters
         {activeExtraCount > 0 && (
-          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1 text-xs text-white">
+          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-contrast px-1 text-xs text-on-contrast">
             {activeExtraCount}
           </span>
         )}
@@ -142,7 +144,7 @@ function FilterPanel({
             aria-label="Close filters"
             className="grid h-8 w-8 place-items-center rounded-full text-ink hover:bg-muted"
           >
-            ✕
+            <Icon name="close" size={18} />
           </button>
         </div>
 
