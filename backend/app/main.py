@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Airbnb Clone API", lifespan=lifespan)
+app = FastAPI(title="Stays Like Home API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
