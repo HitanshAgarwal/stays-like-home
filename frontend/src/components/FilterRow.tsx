@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Icon, type IconName } from "@/components/Icon";
+import { PriceRangeSlider } from "@/components/PriceRangeSlider";
 
 export interface Filters {
   property_type: string;
@@ -108,7 +109,7 @@ export function FilterRow({
           aria-expanded={panelOpen}
           className="flex items-center gap-2 rounded-xl border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-ink"
         >
-          <FilterIcon />
+          <Icon name="tune" size={16} />
           Filters
           {activeExtraCount > 0 && (
             <span className="grid h-5 min-w-5 place-items-center rounded-full bg-contrast px-1 text-xs text-on-contrast">
@@ -192,11 +193,17 @@ function FilterPanel({
 
       {/* price range */}
       <div className="mt-6">
-        <h3 className="text-sm font-semibold text-ink">Price range (per night)</h3>
-        <div className="mt-2 flex items-center gap-3">
-          <PriceInput label="Min" value={minPrice} onChange={setMinPrice} />
-          <span className="mt-5 text-ink-faint">–</span>
-          <PriceInput label="Max" value={maxPrice} onChange={setMaxPrice} />
+        <h3 className="text-sm font-semibold text-ink">Price range</h3>
+        <p className="text-xs text-ink-faint">Per night, before fees</p>
+        <div className="mt-3">
+          <PriceRangeSlider
+            min={minPrice}
+            max={maxPrice}
+            onChange={(lo, hi) => {
+              setMinPrice(lo);
+              setMaxPrice(hi);
+            }}
+          />
         </div>
       </div>
 
@@ -231,39 +238,3 @@ function FilterPanel({
   );
 }
 
-// Labeled numeric price input with a currency prefix (used for Min/Max).
-function PriceInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <label className="flex-1">
-      <span className="mb-1 block text-xs text-ink-faint">{label}</span>
-      <div className="flex items-center rounded-xl border border-line-strong px-3 py-2 focus-within:border-accent">
-        <span className="text-ink-faint">₹</span>
-        <input
-          type="number"
-          min={0}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="0"
-          className="w-full bg-transparent pl-1 text-base outline-none"
-        />
-      </div>
-    </label>
-  );
-}
-
-// Inline sliders icon for the Filters button.
-function FilterIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <path d="M3 5h18M6 12h12M10 19h4" strokeLinecap="round" />
-    </svg>
-  );
-}

@@ -121,3 +121,42 @@ body * {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* Dual-thumb price slider: two <input type=range> stacked on top of each other.
+   The inputs themselves are transparent and ignore pointer events (so the one
+   underneath isn't blocked); only the thumbs are interactive and visible. */
+.range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+  margin: 0;
+}
+.range-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: auto;
+  height: 24px;
+  width: 24px;
+  border-radius: 9999px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-strong);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+.range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  height: 24px;
+  width: 24px;
+  border-radius: 9999px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-strong);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+.range-thumb::-webkit-slider-runnable-track {
+  background: transparent;
+}
+.range-thumb::-moz-range-track {
+  background: transparent;
+}
