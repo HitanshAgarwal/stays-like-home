@@ -1,6 +1,6 @@
 export function formatPrice(value: number): string {
-  // backend prices are plain numbers (USD-ish demo values)
-  return `$${Math.round(value).toLocaleString()}`;
+  // Prices are stored as plain numbers; all listings are in India, so display INR.
+  return `₹${Math.round(value).toLocaleString("en-IN")}`;
 }
 
 export function titleCase(value: string): string {

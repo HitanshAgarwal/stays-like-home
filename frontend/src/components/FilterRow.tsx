@@ -227,7 +227,7 @@ function PriceInput({
     <label className="flex-1">
       <span className="mb-1 block text-xs text-ink-faint">{label}</span>
       <div className="flex items-center rounded-xl border border-line-strong px-3 py-2 focus-within:border-accent">
-        <span className="text-ink-faint">$</span>
+        <span className="text-ink-faint">₹</span>
         <input
           type="number"
           min={0}
