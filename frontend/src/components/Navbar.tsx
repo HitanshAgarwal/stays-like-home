@@ -1,5 +1,8 @@
 "use client";
 
+// Navbar: the persistent top header. Shows the logo, a search placeholder (hidden on the
+// explore page, which has its own search), a "Become a host" link, the theme toggle, and a
+// user menu with auth-aware links (trips/host dashboard/log out, or log in/sign up).
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme-context";
 
+// Renders the header bar and the outside-click/Escape-dismissable user menu.
 export function Navbar() {
   const { user, logout, loading } = useAuth();
   const pathname = usePathname();
@@ -129,6 +133,7 @@ export function Navbar() {
   );
 }
 
+// Button that toggles between light and dark theme via the theme context.
 function ThemeToggle() {
   const { theme, toggle } = useTheme();
   const isDark = theme === "dark";
@@ -145,6 +150,7 @@ function ThemeToggle() {
   );
 }
 
+// Inline moon icon (shown in light mode to switch to dark).
 function MoonIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -153,6 +159,7 @@ function MoonIcon() {
   );
 }
 
+// Inline sun icon (shown in dark mode to switch to light).
 function SunIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -162,6 +169,7 @@ function SunIcon() {
   );
 }
 
+// Non-functional search-bar placeholder that links to the explore page to start a search.
 function SearchBar() {
   return (
     <Link
@@ -183,6 +191,7 @@ function SearchBar() {
   );
 }
 
+// Styled link used as an item inside the user dropdown menu.
 function MenuLink({
   href,
   children,
@@ -208,6 +217,7 @@ function MenuLink({
   );
 }
 
+// Derive up-to-two-letter initials from a name for the user avatar.
 function initials(name: string): string {
   return name
     .trim()
@@ -219,6 +229,7 @@ function initials(name: string): string {
 
 /* --- inline icons (no external deps) --- */
 
+// Inline brand logo mark.
 function LogoMark() {
   return (
     <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -227,6 +238,7 @@ function LogoMark() {
   );
 }
 
+// Inline magnifying-glass icon for the search placeholder.
 function SearchIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">
@@ -236,6 +248,7 @@ function SearchIcon() {
   );
 }
 
+// Inline hamburger icon for the user menu trigger.
 function MenuIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -244,6 +257,7 @@ function MenuIcon() {
   );
 }
 
+// Inline user silhouette shown in the avatar when signed out.
 function UserIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

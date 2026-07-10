@@ -423,10 +423,12 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
+// Shared field label styling.
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return <span className="mb-1.5 block text-sm font-medium text-ink">{children}</span>;
 }
 
+// Labeled single-line input with optional numeric type and inline error message.
 function TextField({
   label,
   value,
@@ -460,6 +462,7 @@ function TextField({
   );
 }
 
+// Labeled multi-line textarea with an inline error message (used for the description).
 function TextArea({
   label,
   value,
