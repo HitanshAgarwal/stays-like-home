@@ -1,8 +1,8 @@
 "use client";
 
-// FilterRow: the explore page's filter bar. Shows scrollable property-type chips inline
-// plus a "Filters" button that opens a modal panel for price range and amenity selection.
-// Reports the updated Filters (property type, min/max price, amenities) via onChange.
+// FilterRow: the explore page's filter bar. Shows scrollable amenity chips inline
+// plus a "Filters" button that opens a dropdown (anchored under the button) for
+// property type and price range. Reports the updated Filters via onChange.
 import { useEffect, useRef, useState } from "react";
 
 import { Icon, type IconName } from "@/components/Icon";
@@ -38,7 +38,7 @@ export const ALL_AMENITIES = [
   "Gym",
 ];
 
-// Renders the property-type chips and the Filters button (with an active-filter count badge).
+// Renders the inline amenity chips and the Filters button + dropdown.
 export function FilterRow({
   filters,
   onChange,
@@ -47,63 +47,92 @@ export function FilterRow({
   onChange: (next: Filters) => void;
 }) {
   const [panelOpen, setPanelOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  // active count on the Filters button: property type + price bounds (amenities show inline)
   const activeExtraCount =
-    (filters.min_price ? 1 : 0) + (filters.max_price ? 1 : 0) + filters.amenities.length;
+    (filters.property_type ? 1 : 0) + (filters.min_price ? 1 : 0) + (filters.max_price ? 1 : 0);
+
+  // close the dropdown on outside click / Escape
+  useEffect(() => {
+    if (!panelOpen) return;
+    function onClick(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setPanelOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setPanelOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [panelOpen]);
+
+  function toggleAmenity(name: string) {
+    const next = filters.amenities.includes(name)
+      ? filters.amenities.filter((a) => a !== name)
+      : [...filters.amenities, name];
+    onChange({ ...filters, amenities: next });
+  }
 
   return (
     <div className="flex items-center gap-3">
-      {/* scrollable property-type chips */}
+      {/* scrollable amenity chips */}
       <div className="scrollbar-none -mx-1 flex flex-1 gap-2 overflow-x-auto px-1 py-1">
-        {PROPERTY_TYPES.map((pt) => {
-          const active = filters.property_type === pt.value;
+        {ALL_AMENITIES.map((name) => {
+          const active = filters.amenities.includes(name);
           return (
             <button
-              key={pt.value || "all"}
+              key={name}
               type="button"
-              onClick={() => onChange({ ...filters, property_type: pt.value })}
-              className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+              onClick={() => toggleAmenity(name)}
+              aria-pressed={active}
+              className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 active
                   ? "border-contrast bg-contrast text-on-contrast"
                   : "border-line-strong bg-surface text-ink hover:border-ink"
               }`}
             >
-              <Icon name={pt.icon} size={16} />
-              {pt.label}
+              {name}
             </button>
           );
         })}
       </div>
 
-      {/* filters button */}
-      <button
-        type="button"
-        onClick={() => setPanelOpen(true)}
-        className="flex shrink-0 items-center gap-2 rounded-xl border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-ink"
-      >
-        <FilterIcon />
-        Filters
-        {activeExtraCount > 0 && (
-          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-contrast px-1 text-xs text-on-contrast">
-            {activeExtraCount}
-          </span>
-        )}
-      </button>
+      {/* filters button + anchored dropdown */}
+      <div ref={wrapRef} className="relative shrink-0">
+        <button
+          type="button"
+          onClick={() => setPanelOpen((v) => !v)}
+          aria-expanded={panelOpen}
+          className="flex items-center gap-2 rounded-xl border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-ink"
+        >
+          <FilterIcon />
+          Filters
+          {activeExtraCount > 0 && (
+            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-contrast px-1 text-xs text-on-contrast">
+              {activeExtraCount}
+            </span>
+          )}
+        </button>
 
-      {panelOpen && (
-        <FilterPanel
-          filters={filters}
-          onApply={(next) => {
-            onChange(next);
-            setPanelOpen(false);
-          }}
-          onClose={() => setPanelOpen(false)}
-        />
-      )}
+        {panelOpen && (
+          <FilterPanel
+            filters={filters}
+            onApply={(next) => {
+              onChange(next);
+              setPanelOpen(false);
+            }}
+            onClose={() => setPanelOpen(false)}
+          />
+        )}
+      </div>
     </div>
   );
 }
 
-// Modal dialog for editing price range and amenities; applies changes on "Show results".
+// Dropdown (anchored under the Filters button) for property type + price range.
 function FilterPanel({
   filters,
   onApply,
@@ -113,109 +142,90 @@ function FilterPanel({
   onApply: (next: Filters) => void;
   onClose: () => void;
 }) {
+  const [propertyType, setPropertyType] = useState(filters.property_type);
   const [minPrice, setMinPrice] = useState(filters.min_price);
   const [maxPrice, setMaxPrice] = useState(filters.max_price);
-  const [amenities, setAmenities] = useState<string[]>(filters.amenities);
-  const dialogRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  function toggleAmenity(name: string) {
-    setAmenities((prev) =>
-      prev.includes(name) ? prev.filter((a) => a !== name) : [...prev, name],
-    );
-  }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Filters"
-        className="max-h-[85vh] w-full overflow-y-auto rounded-t-2xl bg-surface p-6 shadow-[var(--shadow-card)] sm:max-w-lg sm:rounded-2xl"
-      >
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-ink">Filters</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close filters"
-            className="grid h-8 w-8 place-items-center rounded-full text-ink hover:bg-muted"
-          >
-            <Icon name="close" size={18} />
-          </button>
-        </div>
+    <div
+      role="dialog"
+      aria-label="Filters"
+      className="absolute right-0 top-full z-50 mt-2 max-h-[70vh] w-[min(92vw,28rem)] overflow-y-auto rounded-2xl border border-line bg-surface p-5 shadow-[var(--shadow-card)]"
+    >
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-ink">Filters</h2>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close filters"
+          className="grid h-8 w-8 place-items-center rounded-full text-ink hover:bg-muted"
+        >
+          <Icon name="close" size={18} />
+        </button>
+      </div>
 
-        <div className="mt-5">
-          <h3 className="text-sm font-semibold text-ink">Price range (per night)</h3>
-          <div className="mt-2 flex items-center gap-3">
-            <PriceInput label="Min" value={minPrice} onChange={setMinPrice} />
-            <span className="mt-5 text-ink-faint">–</span>
-            <PriceInput label="Max" value={maxPrice} onChange={setMaxPrice} />
-          </div>
+      {/* property type */}
+      <div className="mt-5">
+        <h3 className="text-sm font-semibold text-ink">Property type</h3>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {PROPERTY_TYPES.map((pt) => {
+            const on = propertyType === pt.value;
+            return (
+              <button
+                key={pt.value || "all"}
+                type="button"
+                onClick={() => setPropertyType(pt.value)}
+                aria-pressed={on}
+                className={`flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition-colors ${
+                  on
+                    ? "border-contrast bg-contrast text-on-contrast"
+                    : "border-line-strong text-ink-soft hover:border-ink"
+                }`}
+              >
+                <Icon name={pt.icon} size={16} />
+                {pt.label}
+              </button>
+            );
+          })}
         </div>
+      </div>
 
-        <div className="mt-6">
-          <h3 className="text-sm font-semibold text-ink">Amenities</h3>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {ALL_AMENITIES.map((name) => {
-              const on = amenities.includes(name);
-              return (
-                <button
-                  key={name}
-                  type="button"
-                  onClick={() => toggleAmenity(name)}
-                  aria-pressed={on}
-                  className={`rounded-full border px-3.5 py-2 text-sm transition-colors ${
-                    on
-                      ? "border-ink bg-accent-soft text-ink"
-                      : "border-line-strong text-ink-soft hover:border-ink"
-                  }`}
-                >
-                  {name}
-                </button>
-              );
-            })}
-          </div>
-          <p className="mt-2 text-xs text-ink-faint">
-            Amenity filters apply to the loaded results.
-          </p>
+      {/* price range */}
+      <div className="mt-6">
+        <h3 className="text-sm font-semibold text-ink">Price range (per night)</h3>
+        <div className="mt-2 flex items-center gap-3">
+          <PriceInput label="Min" value={minPrice} onChange={setMinPrice} />
+          <span className="mt-5 text-ink-faint">–</span>
+          <PriceInput label="Max" value={maxPrice} onChange={setMaxPrice} />
         </div>
+      </div>
 
-        <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
-          <button
-            type="button"
-            onClick={() => {
-              setMinPrice("");
-              setMaxPrice("");
-              setAmenities([]);
-            }}
-            className="text-sm font-semibold text-ink underline"
-          >
-            Clear all
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              onApply({
-                ...filters,
-                min_price: minPrice,
-                max_price: maxPrice,
-                amenities,
-              })
-            }
-            className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover"
-          >
-            Show results
-          </button>
-        </div>
+      <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
+        <button
+          type="button"
+          onClick={() => {
+            setPropertyType("");
+            setMinPrice("");
+            setMaxPrice("");
+          }}
+          className="text-sm font-semibold text-ink underline"
+        >
+          Clear all
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            onApply({
+              ...filters,
+              property_type: propertyType,
+              min_price: minPrice,
+              max_price: maxPrice,
+            })
+          }
+          className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover"
+        >
+          Show results
+        </button>
       </div>
     </div>
   );
