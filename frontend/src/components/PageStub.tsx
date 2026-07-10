@@ -1,3 +1,5 @@
+// PageStub: a reusable placeholder screen for not-yet-built pages, showing an eyebrow,
+// title, description, and an optional call-to-action link.
 import Link from "next/link";
 
 /** A deliberate placeholder for pages we'll fill in later phases. */

@@ -1,5 +1,9 @@
 "use client";
 
+// ReservePanel: the sticky booking widget on the listing detail page. It hosts the
+// AvailabilityCalendar and guest stepper, computes the price breakdown (nightly + cleaning
+// + service fee), validates the selected range against booked nights and guest limits, and
+// on confirm creates the booking via the API before redirecting to Trips.
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +19,7 @@ import type { BookedRange, ListingDetail } from "@/lib/types";
 // A flat mocked service fee percentage applied to the subtotal (Airbnb-style).
 const SERVICE_FEE_RATE = 0.12;
 
+// Manages date/guest selection, pricing, reserve validation, and the confirm-and-book flow.
 export function ReservePanel({
   listing,
   bookedRanges,
@@ -174,6 +179,7 @@ export function ReservePanel({
   );
 }
 
+// "Confirm and pay" modal summarizing the stay, dates, guests, and total before booking.
 function ConfirmModal({
   listing,
   checkIn,
@@ -259,6 +265,7 @@ function ConfirmModal({
   );
 }
 
+// Label/value line item used in the price breakdown and confirm modal.
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between">
@@ -268,6 +275,7 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
+// Round increment/decrement button used by the guest stepper.
 function StepBtn({
   children,
   onClick,
@@ -292,6 +300,7 @@ function StepBtn({
   );
 }
 
+// Map a booking API error to a user-friendly message based on its HTTP status.
 function bookingErrorMessage(err: ApiError): string {
   switch (err.status) {
     case 401:

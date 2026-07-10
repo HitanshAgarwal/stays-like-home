@@ -1,10 +1,14 @@
 "use client";
 
+// PhotoGallery: the listing detail photo display. Shows a cover + up-to-4 thumbnail mosaic
+// (single cover on mobile) and opens a full-screen Lightbox with keyboard/arrow navigation
+// when a photo is clicked.
 import { useEffect, useState } from "react";
 
 import { Icon } from "@/components/Icon";
 import type { ListingPhoto } from "@/lib/types";
 
+// Renders the photo mosaic (or an empty state) and manages the lightbox open index.
 export function PhotoGallery({ photos, title }: { photos: ListingPhoto[]; title: string }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -75,6 +79,7 @@ export function PhotoGallery({ photos, title }: { photos: ListingPhoto[]; title:
   );
 }
 
+// Full-screen photo viewer with a counter, close button, and arrow/keyboard navigation.
 function Lightbox({
   photos,
   index,
@@ -122,6 +127,7 @@ function Lightbox({
   );
 }
 
+// Left/right navigation arrow overlaid on the lightbox image.
 function NavArrow({ side, onClick }: { side: "left" | "right"; onClick: () => void }) {
   return (
     <button

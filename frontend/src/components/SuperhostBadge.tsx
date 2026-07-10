@@ -1,5 +1,8 @@
 "use client";
 
+// SuperhostBadge: a small "Superhost" pill shown next to qualifying hosts. It either
+// derives the status from host stats (given a hostId) or accepts it directly via `show`,
+// and renders nothing when the host is not a Superhost.
 import { Icon } from "@/components/Icon";
 import { useHostStats } from "@/lib/host-stats";
 
