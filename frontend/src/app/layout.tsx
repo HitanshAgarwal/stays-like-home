@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 
 import { Navbar } from "@/components/Navbar";
 import { AuthProvider } from "@/lib/auth-context";
+import { ToastProvider } from "@/lib/toast-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import "./globals.css";
 
@@ -30,13 +31,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
       <body className="flex min-h-full flex-col bg-canvas text-ink antialiased">
-        <AuthProvider>
-          <WishlistProvider>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </WishlistProvider>
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <WishlistProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </WishlistProvider>
+          </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

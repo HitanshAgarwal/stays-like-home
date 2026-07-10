@@ -6,6 +6,7 @@
 // server-side rendering.
 
 import type {
+  Availability,
   Booking,
   BookingWithListing,
   Listing,
@@ -126,6 +127,8 @@ export const api = {
       page_size?: number;
     }) => request<ListingList>("/api/listings", { auth: false, query: params }),
     get: (id: number | string) => request<ListingDetail>(`/api/listings/${id}`, { auth: false }),
+    availability: (id: number | string) =>
+      request<Availability>(`/api/listings/${id}/availability`, { auth: false }),
     mine: () => request<Listing[]>("/api/listings/mine"),
     create: (data: Record<string, unknown>) =>
       request<Listing>("/api/listings", { method: "POST", body: data }),

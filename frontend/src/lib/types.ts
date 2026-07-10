@@ -91,6 +91,16 @@ export interface Booking {
   created_at: string;
 }
 
+export interface BookedRange {
+  check_in: string;
+  check_out: string;
+}
+
+export interface Availability {
+  listing_id: number;
+  booked_ranges: BookedRange[];
+}
+
 export interface BookingListing {
   id: number;
   title: string;
