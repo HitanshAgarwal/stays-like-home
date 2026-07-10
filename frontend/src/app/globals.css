@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+/*
+  Stays Like Home design tokens.
+  Warm-neutral palette closer to Airbnb's real UI than default Tailwind:
+  off-white backgrounds, near-black (not pure #000) text, a coral accent
+  (Airbnb's "Rausch"), and soft borders. Tailwind v4 reads these @theme
+  variables to generate utilities (bg-canvas, text-ink, text-accent, etc).
+*/
+@theme {
+  /* accent — Airbnb Rausch-ish coral, with a darker hover */
+  --color-accent: #ff385c;
+  --color-accent-hover: #e00b41;
+  --color-accent-soft: #fff0f3;
+
+  /* warm neutrals */
+  --color-canvas: #ffffff;
+  --color-surface: #ffffff;
+  --color-muted: #f7f7f5; /* warm off-white for section fills */
+  --color-ink: #222222; /* primary text — near-black, warm */
+  --color-ink-soft: #5e5d5a; /* secondary text, warm gray */
+  --color-ink-faint: #8a8986; /* tertiary / placeholder */
+  --color-line: #e6e4e0; /* warm hairline borders */
+  --color-line-strong: #d6d3ce;
+
+  /* radii — Airbnb leans on generous rounding */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  /* type scale — deliberate, ~1.2 ratio, not the browser defaults */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem; /* 15px base, matching Airbnb's slightly smaller body */
+  --text-lg: 1.0625rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --shadow-card: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.04), 0 1px 12px rgba(0, 0, 0, 0.03);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* focus ring that matches the accent, for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
