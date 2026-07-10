@@ -6,6 +6,7 @@
 // server-side rendering.
 
 import type {
+  Amenity,
   Availability,
   Booking,
   BookingWithListing,
@@ -112,6 +113,10 @@ export const api = {
     login: (data: { email: string; password: string }) =>
       request<Token>("/api/auth/login", { method: "POST", body: data, auth: false }),
     me: () => request<User>("/api/auth/me"),
+  },
+
+  amenities: {
+    list: () => request<Amenity[]>("/api/amenities", { auth: false }),
   },
 
   listings: {

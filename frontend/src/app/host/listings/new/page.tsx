@@ -1,12 +1,30 @@
-import { PageStub } from "@/components/PageStub";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+import { ListingForm } from "@/components/ListingForm";
+import { useAuth } from "@/lib/auth-context";
 
 export default function NewListingPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) router.replace("/login");
+  }, [loading, user, router]);
+
+  if (loading || !user) return <div className="mx-auto max-w-3xl px-4 py-16" />;
+
   return (
-    <PageStub
-      eyebrow="Host"
-      title="Create a new listing"
-      description="The multi-step listing creation form — details, location, price, amenities, and photos — will live here."
-      cta={{ href: "/host", label: "Back to dashboard" }}
-    />
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-10">
+      <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">Create a new listing</h1>
+      <p className="mt-1 text-sm text-ink-soft">
+        Fill in the details below. You can edit everything later.
+      </p>
+      <div className="mt-8">
+        <ListingForm mode="create" />
+      </div>
+    </div>
   );
 }
