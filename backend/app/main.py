@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.amenities import router as amenities_router
 from app.api.auth import router as auth_router
 from app.api.bookings import router as bookings_router
+from app.api.hosts import router as hosts_router
 from app.api.listings import router as listings_router
 from app.api.reviews import router as reviews_router
 from app.api.wishlist import router as wishlist_router
@@ -38,6 +39,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(amenities_router)
 app.include_router(listings_router)
+app.include_router(hosts_router)
 app.include_router(bookings_router)
 app.include_router(reviews_router)
 app.include_router(wishlist_router)
