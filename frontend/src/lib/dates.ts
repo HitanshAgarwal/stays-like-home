@@ -66,3 +66,8 @@ export function formatDateRange(checkIn: string, checkOut: string): string {
   if (!checkIn || !checkOut) return "";
   return `${formatDateShort(checkIn)} – ${formatDateShort(checkOut)}`;
 }
+
+// Compact "10 Jul" (no year) for the tight search-bar range label.
+export function formatDateCompact(iso: string): string {
+  return fromISO(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+}

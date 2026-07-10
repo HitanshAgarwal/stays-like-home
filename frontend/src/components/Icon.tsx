@@ -32,7 +32,8 @@ export type IconName =
   | "info"
   | "arrow_back"
   | "chevron_left"
-  | "chevron_right";
+  | "chevron_right"
+  | "search";
 
 const PATHS: Record<IconName, string> = {
   close:
@@ -84,6 +85,8 @@ const PATHS: Record<IconName, string> = {
   arrow_back: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z",
   chevron_left: "M15.41 16.59 10.83 12l4.58-4.59L14 6l-6 6 6 6z",
   chevron_right: "M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z",
+  search:
+    "M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14",
 };
 
 export function Icon({
