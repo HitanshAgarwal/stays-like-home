@@ -40,10 +40,9 @@ export function ReservePanel({
 
   const [checkIn, setCheckIn] = useState(initialCheckIn);
   const [checkOut, setCheckOut] = useState(initialCheckOut);
-  // seed from the search's guest count, clamped to what this listing allows (min 1)
-  const [guests, setGuests] = useState(
-    initialGuests ? Math.min(Math.max(initialGuests, 1), listing.max_guests) : 1,
-  );
+  // seed from the search's guest count (min 1). No cap to max_guests here: the
+  // reserve button validation and the backend already block an over-capacity booking.
+  const [guests, setGuests] = useState(initialGuests ? Math.max(initialGuests, 1) : 1);
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
