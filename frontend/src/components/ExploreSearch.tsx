@@ -57,9 +57,12 @@ export function ExploreSearch({
 
   // NOTE: keyed by initial values in the parent, so it remounts fresh when the URL changes.
 
-  // desktop: close any open popover on outside click / Escape
+  // desktop: close any open popover on outside click / Escape.
+  // Skipped while the mobile sheet is open — that sheet has its own close button,
+  // and its taps are "outside" the hidden desktop bar, which would otherwise
+  // collapse the active section on every tap.
   useEffect(() => {
-    if (segment === null) return;
+    if (segment === null || sheetOpen) return;
     function onClick(e: MouseEvent) {
       if (barRef.current && !barRef.current.contains(e.target as Node)) setSegment(null);
     }
@@ -72,7 +75,7 @@ export function ExploreSearch({
       document.removeEventListener("mousedown", onClick);
       document.removeEventListener("keydown", onKey);
     };
-  }, [segment]);
+  }, [segment, sheetOpen]);
 
   function submit() {
     onSearch({ city: city.trim(), check_in: checkIn, check_out: checkOut, guests });
@@ -102,13 +105,15 @@ export function ExploreSearch({
       }}
     />
   );
-  const whenBody = (
+  // `months` differs by surface: 2 in the wide desktop popover, 1 in the phone sheet.
+  const whenBody = (months: number) => (
     <div>
       <AvailabilityCalendar
         bookedNights={NO_BOOKED.nights}
         bookedRanges={NO_BOOKED.ranges}
         checkIn={checkIn}
         checkOut={checkOut}
+        months={months}
         onChange={(ci, co) => {
           setCheckIn(ci);
           setCheckOut(co);
@@ -202,7 +207,7 @@ export function ExploreSearch({
             }`}
           >
             {segment === "where" && whereBody}
-            {segment === "when" && whenBody}
+            {segment === "when" && whenBody(2)}
             {segment === "who" && whoBody}
           </div>
         )}
@@ -210,7 +215,7 @@ export function ExploreSearch({
 
       {/* ---------- MOBILE: full-screen sheet ---------- */}
       {sheetOpen && (
-        <div className="fixed inset-0 z-[70] flex flex-col bg-canvas sm:hidden">
+        <div className="fixed inset-0 z-[70] flex h-dvh flex-col bg-canvas sm:hidden">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <span className="text-base font-semibold text-ink">Search</span>
             <button
@@ -238,7 +243,7 @@ export function ExploreSearch({
               summary={dateLabel === "Add dates" ? "Any week" : dateLabel}
               onOpen={() => setSegment("when")}
             >
-              {whenBody}
+              {whenBody(1)}
             </SheetSection>
             <SheetSection
               label="Who"
