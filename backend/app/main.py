@@ -1,5 +1,6 @@
 """FastAPI application entry point: wires up CORS, routers, DB startup, and a health check."""
 
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -22,9 +23,23 @@ import app.models  # noqa: F401
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan: create all database tables on startup before serving requests."""
+    """Application lifespan: create all database tables on startup before serving requests.
+
+    If the SEED_ON_STARTUP env var is truthy, also load demo data once. This is a
+    deploy convenience for environments (e.g. SQLite on a Railway volume) that can
+    only be seeded from inside the container. It is env-gated on purpose: seeding
+    DROPS ALL TABLES, so it must never run unless the flag is explicitly set — unset
+    the var again right after the one-time seed so future restarts don't wipe data.
+    """
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    if os.getenv("SEED_ON_STARTUP", "").lower() in ("1", "true", "yes"):
+        from app.seed import seed
+
+        counts = await seed()
+        print(f"[SEED_ON_STARTUP] seeded demo data: {counts}")
+
     yield
 
 
