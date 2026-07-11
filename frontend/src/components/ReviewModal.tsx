@@ -9,6 +9,7 @@ import { Icon } from "@/components/Icon";
 import { api, ApiError } from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
 
+// Renders the review dialog (star picker + comment) and submits it for a booking.
 export function ReviewModal({
   bookingId,
   listingTitle,

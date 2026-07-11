@@ -26,6 +26,7 @@ const pinIcon = L.divIcon({
   iconAnchor: [13, 26], // tip of the pin sits on the coordinate
 });
 
+// Renders the map centered on the given coordinates with a single labeled pin.
 export function ListingMap({
   latitude,
   longitude,

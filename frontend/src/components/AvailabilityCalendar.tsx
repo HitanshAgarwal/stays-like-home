@@ -6,7 +6,7 @@
 import { useMemo, useState } from "react";
 
 import { Icon } from "@/components/Icon";
-import { addDays, fromISO, rangeOverlapsBooked, todayISO, toISO } from "@/lib/dates";
+import { fromISO, rangeOverlapsBooked, todayISO, toISO } from "@/lib/dates";
 import type { BookedRange } from "@/lib/types";
 
 interface Props {
@@ -157,6 +157,3 @@ function buildMonth(base: Date): (Date | null)[][] {
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
   return weeks;
 }
-
-// re-export for callers that only need the next-day helper alongside the calendar
-export { addDays };

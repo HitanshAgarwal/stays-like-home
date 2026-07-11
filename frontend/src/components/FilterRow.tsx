@@ -25,7 +25,9 @@ const PROPERTY_TYPES: { value: string; label: string; icon: IconName }[] = [
   { value: "tent", label: "Tents", icon: "camping" },
 ];
 
-export const ALL_AMENITIES = [
+// The amenity catalog shown as chips (mirrors the seeded amenities). Filtered
+// client-side, so these are names rather than ids.
+const ALL_AMENITIES = [
   "WiFi",
   "Kitchen",
   "Pool",

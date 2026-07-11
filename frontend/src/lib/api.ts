@@ -22,16 +22,19 @@ import type {
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const TOKEN_KEY = "slh_token";
 
+// Read the stored auth token (null on the server, where localStorage is absent).
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem(TOKEN_KEY);
 }
 
+// Persist the auth token to localStorage (no-op on the server).
 export function setToken(token: string): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(TOKEN_KEY, token);
 }
 
+// Remove the stored auth token, e.g. on logout (no-op on the server).
 export function clearToken(): void {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(TOKEN_KEY);

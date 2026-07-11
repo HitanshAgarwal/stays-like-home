@@ -3,6 +3,7 @@
 
 import type { BookedRange } from "./types";
 
+// Format a Date as a local "YYYY-MM-DD" day string.
 export function toISO(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -10,15 +11,18 @@ export function toISO(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
+// Parse a "YYYY-MM-DD" string into a local Date (midnight local time).
 export function fromISO(iso: string): Date {
   const [y, m, d] = iso.split("-").map(Number);
   return new Date(y, m - 1, d);
 }
 
+// Today's date as a "YYYY-MM-DD" string.
 export function todayISO(): string {
   return toISO(new Date());
 }
 
+// Add (or subtract, if n is negative) n calendar days to an ISO day string.
 export function addDays(iso: string, n: number): string {
   const d = fromISO(iso);
   d.setDate(d.getDate() + n);
@@ -54,6 +58,7 @@ export function rangeOverlapsBooked(
   return ranges.some((r) => checkIn < r.check_out && checkOut > r.check_in);
 }
 
+// Human-readable single date, e.g. "Jul 10, 2026".
 export function formatDateShort(iso: string): string {
   return fromISO(iso).toLocaleDateString(undefined, {
     month: "short",
@@ -62,6 +67,7 @@ export function formatDateShort(iso: string): string {
   });
 }
 
+// Human-readable date range "Jul 10, 2026 – Jul 16, 2026" (empty if incomplete).
 export function formatDateRange(checkIn: string, checkOut: string): string {
   if (!checkIn || !checkOut) return "";
   return `${formatDateShort(checkIn)} – ${formatDateShort(checkOut)}`;

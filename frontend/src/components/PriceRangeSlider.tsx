@@ -13,6 +13,8 @@ const MIN = 0;
 const MAX = 500; // per-night ceiling; the top thumb means "this or more"
 const STEP = 10;
 
+// Renders the two-thumb slider, filled track, and Min/Max value boxes; reports
+// changes as string min/max ("" meaning no bound on that end).
 export function PriceRangeSlider({
   min,
   max,

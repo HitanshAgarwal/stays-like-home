@@ -89,6 +89,7 @@ LISTINGS = [
 
 
 async def seed() -> dict[str, int]:
+    """Drop and recreate all tables, insert the demo dataset, and return row counts per table."""
     # Fresh slate every run.
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
@@ -260,6 +261,7 @@ async def seed() -> dict[str, int]:
 
 
 async def main() -> None:
+    """Entry point: run the seed, dispose the engine, and print the resulting row counts."""
     counts = await seed()
     await engine.dispose()
     width = max(len(k) for k in counts)
