@@ -3,6 +3,7 @@
 // Listing detail page: fetches a single listing (and its best-effort availability) by id
 // and renders the full detail view — photo gallery, host + specs, description, amenities,
 // location, reviews, and the sticky ReservePanel that drives the booking flow.
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
@@ -14,6 +15,16 @@ import { api, ApiError } from "@/lib/api";
 import { formatDateShort } from "@/lib/dates";
 import { titleCase } from "@/lib/format";
 import type { Availability, ListingDetail } from "@/lib/types";
+
+// Leaflet touches `window` at import, so load the map client-side only (no SSR).
+// The fallback keeps the same box size to avoid layout shift while it loads.
+const ListingMap = dynamic(
+  () => import("@/components/ListingMap").then((m) => m.ListingMap),
+  {
+    ssr: false,
+    loading: () => <div className="h-full w-full animate-pulse bg-muted" />,
+  },
+);
 
 // Page component: loads the listing + availability and renders the detail layout with the reserve panel.
 export default function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -140,14 +151,12 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             <p className="mt-1 text-sm text-ink-soft">
               {listing.address}, {listing.city}, {listing.country}
             </p>
-            <div className="mt-4 grid aspect-[16/9] w-full place-items-center rounded-2xl border border-line bg-muted text-center text-sm text-ink-faint">
-              <div className="flex flex-col items-center">
-                <Icon name="map" size={32} />
-                <p className="mt-1">Map coming soon</p>
-                <p className="text-xs">
-                  {listing.latitude.toFixed(3)}, {listing.longitude.toFixed(3)}
-                </p>
-              </div>
+            <div className="mt-4 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-line">
+              <ListingMap
+                latitude={listing.latitude}
+                longitude={listing.longitude}
+                label={listing.title}
+              />
             </div>
           </section>
 
