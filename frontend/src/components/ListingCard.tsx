@@ -4,6 +4,7 @@
 // dots, a wishlist heart, an optional Superhost badge, and the location/title/type/price,
 // all linking through to the listing detail page.
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { formatPrice } from "@/lib/format";
@@ -18,6 +19,17 @@ export function ListingCard({ listing }: { listing: Listing }) {
   const photos = listing.photos.length > 0 ? listing.photos : [];
   const [active, setActive] = useState(0);
 
+  // Carry the searched dates/guests onto the listing link so the reserve panel
+  // prefills them (but not city/type/page, which scope the search, not the stay).
+  const searchParams = useSearchParams();
+  const stayParams = new URLSearchParams();
+  for (const key of ["check_in", "check_out", "guests"]) {
+    const v = searchParams.get(key);
+    if (v) stayParams.set(key, v);
+  }
+  const qs = stayParams.toString();
+  const href = qs ? `/listings/${listing.id}?${qs}` : `/listings/${listing.id}`;
+
   return (
     <div className="group relative">
       {/* image area with heart + carousel */}
@@ -25,7 +37,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         <WishlistHeart listingId={listing.id} />
         <SuperhostBadge hostId={listing.host_id} className="absolute left-3 top-3 z-10" />
 
-        <Link href={`/listings/${listing.id}`} className="block h-full w-full">
+        <Link href={href} className="block h-full w-full">
           {photos.length > 0 ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -64,7 +76,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
       </div>
 
       {/* text block */}
-      <Link href={`/listings/${listing.id}`} className="mt-3 block">
+      <Link href={href} className="mt-3 block">
         <div className="flex items-start justify-between gap-2">
           <h3 className="truncate font-semibold text-ink">
             {listing.city}, {listing.country}

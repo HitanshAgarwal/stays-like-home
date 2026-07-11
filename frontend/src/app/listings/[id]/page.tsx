@@ -5,6 +5,7 @@
 // location, reviews, and the sticky ReservePanel that drives the booking flow.
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
 import { Icon, type IconName } from "@/components/Icon";
@@ -29,6 +30,12 @@ const ListingMap = dynamic(
 // Page component: loads the listing + availability and renders the detail layout with the reserve panel.
 export default function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params); // Next 16: params is a promise
+
+  // dates/guests carried over from the search that led here (used to prefill Reserve)
+  const searchParams = useSearchParams();
+  const preCheckIn = searchParams.get("check_in") ?? "";
+  const preCheckOut = searchParams.get("check_out") ?? "";
+  const preGuests = Number(searchParams.get("guests") ?? "") || undefined;
 
   const [listing, setListing] = useState<ListingDetail | null>(null);
   const [availability, setAvailability] = useState<Availability | null>(null);
@@ -203,7 +210,13 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
 
         {/* sticky reserve panel */}
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <ReservePanel listing={listing} bookedRanges={bookedRanges} />
+          <ReservePanel
+            listing={listing}
+            bookedRanges={bookedRanges}
+            initialCheckIn={preCheckIn}
+            initialCheckOut={preCheckOut}
+            initialGuests={preGuests}
+          />
         </aside>
       </div>
     </div>

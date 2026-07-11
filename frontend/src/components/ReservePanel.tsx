@@ -20,20 +20,30 @@ import type { BookedRange, ListingDetail } from "@/lib/types";
 const SERVICE_FEE_RATE = 0.12;
 
 // Manages date/guest selection, pricing, reserve validation, and the confirm-and-book flow.
+// initialCheckIn/Out/Guests prefill the panel from the search that led here (if any).
 export function ReservePanel({
   listing,
   bookedRanges,
+  initialCheckIn = "",
+  initialCheckOut = "",
+  initialGuests,
 }: {
   listing: ListingDetail;
   bookedRanges: BookedRange[];
+  initialCheckIn?: string;
+  initialCheckOut?: string;
+  initialGuests?: number;
 }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(1);
+  const [checkIn, setCheckIn] = useState(initialCheckIn);
+  const [checkOut, setCheckOut] = useState(initialCheckOut);
+  // seed from the search's guest count, clamped to what this listing allows (min 1)
+  const [guests, setGuests] = useState(
+    initialGuests ? Math.min(Math.max(initialGuests, 1), listing.max_guests) : 1,
+  );
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
