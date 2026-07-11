@@ -94,6 +94,9 @@ export function Navbar() {
                     <MenuLink href="/trips" onClick={() => setMenuOpen(false)}>
                       My trips
                     </MenuLink>
+                    <MenuLink href="/wishlist" onClick={() => setMenuOpen(false)}>
+                      Wishlist
+                    </MenuLink>
                     <MenuLink href="/messages" onClick={() => setMenuOpen(false)}>
                       Messages
                     </MenuLink>
